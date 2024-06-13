@@ -5,15 +5,18 @@ import java.io.File;
 public class Folder {
     private  final Report report;
     private final String folder;
+    private String folderAutoNumber;
+    private String folderDate;
 
     public Folder(Report report, String folder) {
         this.report = report;
         this.folder = folder;
+        setDirectory();
     }
-    public String getFolderName(){
+    private void setDirectory(){
         String folderAuto = folder + "/" + report.getAuto();
-        String folderAutoNumber = folderAuto + "/" + report.getAuto() + " " + report.getSerialNumber() + "_" + report.getHouseNumber();
-        String folderDate = folderAutoNumber + "/" + report.getDate();
+        folderAutoNumber = folderAuto + "/" + report.getAuto() + " " + report.getSerialNumber() + "_" + report.getHouseNumber();
+        folderDate = folderAutoNumber + "/" + report.getDate();
 
         File dirAuto = new File(folderAuto);
         if (!dirAuto.exists()){
@@ -27,11 +30,13 @@ public class Folder {
         if (!dirDate.exists()){
             dirDate.mkdir();
         }
+    }
 
-        System.out.println(folderAuto);
-        System.out.println(folderAutoNumber);
-        System.out.println(folderDate);
-
+    public String getDirAutoNumber() {
         return folderAutoNumber;
+    }
+
+    public String getDirDate() {
+        return folderDate;
     }
 }
