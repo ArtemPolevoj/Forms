@@ -9,8 +9,10 @@ public class Main {
         FileRead fileRead = new FileRead(fileNameExcel);
         Report report = fileRead.getReport();
         Folder folder = new Folder(report, mainFolder);
-        WordFile wordFile = new WordFile(report, folder.getFolderName());
-   //     wordFile.createFile();
+        ImageForm imageForm = new ImageForm(report, folder.getDirDate());
+
+        WordFile wordFile = new WordFile(report, folder.getDirAutoNumber(),imageForm.getImageMap());
+        wordFile.createFile();
 //        System.out.println(report);
 //        Map<String, String> map = report.getAnswer();
 //        map.forEach((key, value) -> System.out.println(key + " - " + value));
