@@ -18,7 +18,7 @@ public class ImageForm {
     public ImageForm(Report report, String folder) {
         this.report = report;
         this.folder = folder;
-       // getImage();
+        getImage();
     }
 
     private void getImage() {
@@ -38,9 +38,9 @@ public class ImageForm {
                     try {
                         Desktop d = Desktop.getDesktop();
                         d.browse(new URI(arrImage[i]));
-                        TimeUnit.SECONDS.sleep(5);
+                        TimeUnit.SECONDS.sleep(4);
                         BufferedImage image = new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
-                        BufferedImage screen = image.getSubimage(200, 110, 1200, 750);
+                        BufferedImage screen = image.getSubimage(200, 110, 1200, 700);
                         String imageFileName = folder + "/" + number + "." + (i + 1) + ".jpeg";
                         ImageIO.write(screen, "jpeg", new File(imageFileName));
                         if (imageMap.containsKey(number)){
