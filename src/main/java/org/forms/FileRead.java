@@ -7,6 +7,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class FileRead {
@@ -38,12 +40,7 @@ public class FileRead {
                     Cell cell = cellIterator.next();
                     switch (cell.toString()) {
                         case "ID" -> report.setId(getTextTempCell(cell));
-                        case "Время создания" -> {
-                            String tempDate = getTextTempCell(cell);
-                            String[] arr = tempDate.substring(0, tempDate.indexOf(' ')).split("-");
-                            String date = arr[2] + "." + arr[1] + "." + arr[0];
-                            report.setDate(date);
-                        }
+                        case "Время создания" -> report.setDate(parsDate(getTextTempCell(cell)));
                         case "## Заказчик" -> report.setClient(getTextTempCell(cell));
                         case "## Машина" -> report.setAuto(getTextTempCell(cell));
                         case "## Серийный номер" -> report.setSerialNumber(getTextTempCell(cell));
@@ -100,6 +97,17 @@ public class FileRead {
             answer.put(key, newValue);
         } else {
             answer.put(key, value);
+        }
+    }
+    private String parsDate(String inputDate){
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat outputFormat = new SimpleDateFormat("dd.MM.yyyy");
+        Date date;
+        try {
+            date = inputFormat.parse(inputDate);
+            return outputFormat.format(date);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
         }
     }
 }
