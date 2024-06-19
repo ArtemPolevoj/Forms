@@ -38,7 +38,7 @@ public class ImageForm {
                     try {
                         Desktop d = Desktop.getDesktop();
                         d.browse(new URI(arrImage[i]));
-                        TimeUnit.SECONDS.sleep(4);
+                        TimeUnit.SECONDS.sleep(5);
                         BufferedImage image = new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
                         BufferedImage screen = image.getSubimage(200, 110, 1200, 700);
                         String imageFileName = folder + "/" + number + "." + (i + 1) + ".jpeg";
