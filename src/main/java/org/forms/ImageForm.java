@@ -1,27 +1,23 @@
 package org.forms;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class ImageForm {
     private final Report report;
     private final String folder;
-    private Map<String, String> imageMap = new HashMap<>();
 
     public ImageForm(Report report, String folder) {
         this.report = report;
         this.folder = folder;
-        getImage();
     }
 
-    private void getImage() {
+    public void setImageAnswer() {
         Map<String, String> map = report.getAnswer();
         String number;
         for (String key : map.keySet()) {
@@ -32,6 +28,10 @@ public class ImageForm {
                     number = "O";
                 }
                 String[] arrImage = map.get(key).split(", ");
+                if (map.get(key).contains("https://")) {
+                    String valueTemp = "";
+                    map.put(key, valueTemp);
+                }
 
                 for (int i = 0; i < arrImage.length; i++) {
 
@@ -43,22 +43,19 @@ public class ImageForm {
                         BufferedImage screen = image.getSubimage(200, 110, 1200, 700);
                         String imageFileName = folder + "/" + number + "." + (i + 1) + ".jpeg";
                         ImageIO.write(screen, "jpeg", new File(imageFileName));
-                        if (imageMap.containsKey(number)){
-                            String value = imageMap.get(number);
+                        if (map.get(key).isEmpty()) {
+                            map.put(key, imageFileName);
+                        } else {
+                            String value = map.get(key);
                             value = value + ", " + imageFileName;
-                            imageMap.put(number, value);
-                        }else {
-                            imageMap.put(number, imageFileName);
+                            map.put(key, value);
                         }
-
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 }
             }
         }
-    }
-    public Map<String, String> getImageMap(){
-        return imageMap;
+        report.setAnswer(map);
     }
 }
