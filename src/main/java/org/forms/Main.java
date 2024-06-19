@@ -10,10 +10,10 @@ public class Main {
         Report report = fileRead.getReport();
         Folder folder = new Folder(report, mainFolder);
         ImageForm imageForm = new ImageForm(report, folder.getDirDate());
-
-        WordFile wordFile = new WordFile(report, folder.getDirAutoNumber(),imageForm.getImageMap());
+        imageForm.setImageAnswer();
+        WordFile wordFile = new WordFile(report, folder.getDirAutoNumber());
         wordFile.createFile();
-//        System.out.println(report);
+        //      System.out.println(report);
 //        Map<String, String> map = report.getAnswer();
 //        map.forEach((key, value) -> System.out.println(key + " - " + value));
     }
