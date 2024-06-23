@@ -1,10 +1,13 @@
 package org.forms;
 
+
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.edge.EdgeDriver;
+
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -36,13 +39,18 @@ public class ImageForm {
                 for (int i = 0; i < arrImage.length; i++) {
 
                     try {
-                        Desktop d = Desktop.getDesktop();
-                        d.browse(new URI(arrImage[i]));
+                        EdgeDriver driver = new EdgeDriver();
+                        driver.manage().window().maximize();
+                        driver.get(arrImage[i]);
                         TimeUnit.SECONDS.sleep(5);
-                        BufferedImage image = new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
-                        BufferedImage screen = image.getSubimage(200, 110, 1200, 700);
+                        File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+                        BufferedImage image = ImageIO.read(screenshot);
+                        int width = image.getWidth();
+                        int height = image.getHeight();
+                        BufferedImage screen = image.getSubimage(0, 0, width - 10, height - 10); // Обрезка до половины исходного размера
                         String imageFileName = folder + "/" + number + "." + (i + 1) + ".jpeg";
                         ImageIO.write(screen, "jpeg", new File(imageFileName));
+                        driver.close();
                         if (map.get(key).isEmpty()) {
                             map.put(key, imageFileName);
                         } else {
