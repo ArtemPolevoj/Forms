@@ -1,18 +1,23 @@
 package org.forms;
 
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.util.Units;
+import org.apache.poi.wp.usermodel.HeaderFooterType;
+import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.*;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
+import org.apache.xmlbeans.XmlCursor;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Field;
+import java.math.BigInteger;
 import java.util.Map;
 
 public class WordFile {
     private final Report report;
     private final String folderName;
+    XWPFDocument document;
     private XWPFTable table;
     private final String sizeCell1 = "70%";
     private final String sizeCell2 = "30%";
@@ -43,8 +48,9 @@ public class WordFile {
         int countRow = report.getAnswer().size() + numberOfFields + 2;// +2 - plus two row
 
 
-        try (XWPFDocument document = new XWPFDocument()) {
-
+        try {
+            document = new XWPFDocument();
+            setHeader();
             table = document.createTable(countRow, 2);
             table.setWidth("100%");
             XWPFTableRow inputDateRow = table.getRow(0);
@@ -129,13 +135,13 @@ public class WordFile {
 
 
             FileOutputStream outputStream = new FileOutputStream(file);
-                if (file.exists()) file.delete();
+            if (file.exists()) file.delete();
 
 
-                document.write(outputStream);
+            document.write(outputStream);
 
 
-        } catch (IOException e) {
+        } catch (IOException | InvalidFormatException e) {
             throw new RuntimeException(e);
         }
 
@@ -181,5 +187,35 @@ public class WordFile {
         run.setFontSize(20);
         run.setBold(true);
         cell1.setColor("BC8F8F");
+    }
+
+    private void setHeader() throws IOException, InvalidFormatException {
+
+        CTSectPr sectPr = document.getDocument().getBody().addNewSectPr();
+        XWPFHeaderFooterPolicy headerFooterPolicy = new XWPFHeaderFooterPolicy(document, sectPr);
+
+        XWPFHeader header = headerFooterPolicy.createHeader(XWPFHeaderFooterPolicy.DEFAULT);
+
+        XWPFParagraph paragraph = header.createParagraph();
+        paragraph.setAlignment(ParagraphAlignment.LEFT);
+
+        CTTabStop tabStop = paragraph.getCTP().getPPr().addNewTabs().addNewTab();
+        tabStop.setVal(STTabJc.LEFT);
+        int twipsPerInch = 1440;
+        tabStop.setPos(BigInteger.valueOf(6 * twipsPerInch));
+
+       XWPFRun run = paragraph.createRun();
+        String imgFile = "logo.png";
+        run.addPicture(new FileInputStream(imgFile), XWPFDocument.PICTURE_TYPE_PNG, imgFile, Units.toEMU(140), Units.toEMU(30));
+
+
+        // create footer start
+        XWPFFooter footer = headerFooterPolicy.createFooter(XWPFHeaderFooterPolicy.DEFAULT);
+
+        paragraph = footer.createParagraph();
+        paragraph.setAlignment(ParagraphAlignment.CENTER);
+
+        run = paragraph.createRun();
+        run.setText("The Footer:");
     }
 }
