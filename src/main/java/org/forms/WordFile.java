@@ -1,6 +1,7 @@
 package org.forms;
 
 
+import org.apache.poi.common.usermodel.PictureType;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
 import org.apache.poi.wp.usermodel.HeaderFooterType;
@@ -12,15 +13,18 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 public class WordFile {
     private final Report report;
     private final String folderName;
-    XWPFDocument document;
+    private XWPFDocument document;
     private XWPFTable table;
     private final String sizeCell1 = "70%";
     private final String sizeCell2 = "30%";
+    private final int sizePage = 700;
 
     public WordFile(Report report, String folderName) {
         this.report = report;
@@ -45,22 +49,29 @@ public class WordFile {
         Class<?> myClass = Report.class;
         Field[] fields = myClass.getDeclaredFields();
         int numberOfFields = fields.length;
-        int countRow = report.getAnswer().size() + numberOfFields + 2;// +2 - plus two row
+        int countRow = report.getAnswer().size() + numberOfFields + 1;// +1 - plus row
 
 
         try {
             document = new XWPFDocument();
-            setHeader();
+            setHeaderFooter();
+
+            document.getDocument().getBody().addNewSectPr().addNewPgMar().setLeft(BigInteger.valueOf(sizePage));
+            document.getDocument().getBody().addNewSectPr().addNewPgMar().setRight(BigInteger.valueOf(sizePage));
+            document.getDocument().getBody().addNewSectPr().addNewPgMar().setTop(BigInteger.valueOf(sizePage));
+            document.getDocument().getBody().addNewSectPr().addNewPgMar().setBottom(BigInteger.valueOf(sizePage));
+
             table = document.createTable(countRow, 2);
             table.setWidth("100%");
+            table.setInsideVBorder(XWPFTable.XWPFBorderType.SINGLE, 10, 0, "000000");
+            table.setInsideHBorder(XWPFTable.XWPFBorderType.SINGLE, 10, 0, "000000");
+
             XWPFTableRow inputDateRow = table.getRow(0);
             XWPFTableCell inputDateCell1 = inputDateRow.getCell(0);
             XWPFTableCell inputDateCell2 = inputDateRow.getCell(1);
 
             String inputData = "Данные инспекции";
-
             setMergeRow(inputDateCell1, inputDateCell2, inputData);
-
 
             for (int i = 1; i <= numberOfFields; i++) {
                 XWPFTableCell cell1 = table.getRow(i).getCell(0);
@@ -125,13 +136,7 @@ public class WordFile {
             }
 
 
-            //   table.setRowBandSize(50);
 
-
-            table.setInsideVBorder(XWPFTable.XWPFBorderType.SINGLE, 10, 0, "000000");
-            table.setInsideHBorder(XWPFTable.XWPFBorderType.SINGLE, 10, 0, "000000");
-
-            //   cell2.getParagraphs().getFirst().setVerticalAlignment(TextAlignment.CENTER);
 
 
             FileOutputStream outputStream = new FileOutputStream(file);
@@ -147,7 +152,7 @@ public class WordFile {
 
     }
 
-    private void setDataRow(String firstText, String secondText, int numberRow) {
+    private void setDataRow(String firstText, String secondText, int numberRow) throws IOException, InvalidFormatException {
         XWPFTableCell cell1 = table.getRow(numberRow).getCell(0);
         XWPFTableCell cell2 = table.getRow(numberRow).getCell(1);
 
@@ -159,6 +164,7 @@ public class WordFile {
         XWPFParagraph paragraph = cell2.getParagraphs().getFirst();
         paragraph.setAlignment(ParagraphAlignment.CENTER);
 
+
         switch (secondText) {
             case "ОК" -> {
                 cell1.setColor("90EE90");
@@ -169,9 +175,16 @@ public class WordFile {
                 cell2.setColor("ADD8E6");
             }
             default -> {
-                cell1.setColor("FFDAB9");
-                cell2.setColor("FFDAB9");
+                if (firstText.contains("Общий вид")){
+                    cell1.setColor("ADD8E6");
+                   }else {
+                    cell1.setColor("FFDAB9");
+                    cell2.setColor("FFDAB9");
+                }
             }
+        }
+        if (secondText.contains(".jpeg")){
+            insertImage(cell1, cell2, secondText);
         }
     }
 
@@ -189,33 +202,44 @@ public class WordFile {
         cell1.setColor("BC8F8F");
     }
 
-    private void setHeader() throws IOException, InvalidFormatException {
+    private void setHeaderFooter() throws IOException, InvalidFormatException {
+
+        String logoFileName = "logo.png";
+        String singFileName = "sing.png";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
         CTSectPr sectPr = document.getDocument().getBody().addNewSectPr();
         XWPFHeaderFooterPolicy headerFooterPolicy = new XWPFHeaderFooterPolicy(document, sectPr);
 
         XWPFHeader header = headerFooterPolicy.createHeader(XWPFHeaderFooterPolicy.DEFAULT);
-
         XWPFParagraph paragraph = header.createParagraph();
         paragraph.setAlignment(ParagraphAlignment.LEFT);
+        XWPFRun run = paragraph.createRun();
+        run.addPicture(new FileInputStream(logoFileName), XWPFDocument.PICTURE_TYPE_PNG, logoFileName, Units.toEMU(140), Units.toEMU(30));
 
-        CTTabStop tabStop = paragraph.getCTP().getPPr().addNewTabs().addNewTab();
-        tabStop.setVal(STTabJc.LEFT);
-        int twipsPerInch = 1440;
-        tabStop.setPos(BigInteger.valueOf(6 * twipsPerInch));
-
-       XWPFRun run = paragraph.createRun();
-        String imgFile = "logo.png";
-        run.addPicture(new FileInputStream(imgFile), XWPFDocument.PICTURE_TYPE_PNG, imgFile, Units.toEMU(140), Units.toEMU(30));
-
-
-        // create footer start
         XWPFFooter footer = headerFooterPolicy.createFooter(XWPFHeaderFooterPolicy.DEFAULT);
-
         paragraph = footer.createParagraph();
-        paragraph.setAlignment(ParagraphAlignment.CENTER);
-
+        paragraph.setAlignment(ParagraphAlignment.LEFT);
         run = paragraph.createRun();
-        run.setText("The Footer:");
+        run.setText("Дата: " + dateFormat.format(new Date()));
+        run.setText("                                     Технический специалист     ");
+        run.addPicture(new FileInputStream(singFileName), XWPFDocument.PICTURE_TYPE_PNG, singFileName, Units.toEMU(30), Units.toEMU(30));
+        run.setText("      Полевой А.В.");
+    }
+    private void insertImage(XWPFTableCell cell1, XWPFTableCell cell2, String text) throws IOException, InvalidFormatException {
+        cell1.getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.RESTART);
+        cell2.getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.CONTINUE);
+
+        XWPFParagraph paragraph = cell1.getParagraphs().getFirst();
+        paragraph.setVerticalAlignment(TextAlignment.TOP);
+        paragraph.setAlignment(ParagraphAlignment.LEFT);
+        XWPFRun run = paragraph.createRun();
+        run.addBreak();
+
+        String[] fileName = text.split(", ");
+        int size = (int) ((sizePage/1.3)/ fileName.length);
+        for (String s : fileName) {
+            run.addPicture(new FileInputStream(s), XWPFDocument.PICTURE_TYPE_JPEG, s, Units.toEMU(size), Units.toEMU(size));
+        }
     }
 }
