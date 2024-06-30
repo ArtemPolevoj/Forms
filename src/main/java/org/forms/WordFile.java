@@ -1,35 +1,31 @@
 package org.forms;
 
 
-import org.apache.poi.common.usermodel.PictureType;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
-import org.apache.poi.wp.usermodel.HeaderFooterType;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.*;
-import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
 import java.io.*;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 public class WordFile {
     private final Report report;
     private final String folderName;
     private XWPFDocument document;
-    private XWPFTable table;
     private final String sizeCell1 = "70%";
     private final String sizeCell2 = "30%";
     private final int sizePage = 700;
+    private final List<String> listFailure = new ArrayList<>();
 
     public WordFile(Report report, String folderName) {
         this.report = report;
         this.folderName = folderName;
-
+        setListFailure();
     }
 
     public void createFile() {
@@ -46,14 +42,9 @@ public class WordFile {
 //            file = new File(newFileName);
 //        }
 
-        Class<?> myClass = Report.class;
-        Field[] fields = myClass.getDeclaredFields();
-        int numberOfFields = fields.length;
-        int countRow = report.getAnswer().size() + numberOfFields + 1;// +1 - plus row
-
-
         try {
             document = new XWPFDocument();
+
             setHeaderFooter();
 
             document.getDocument().getBody().addNewSectPr().addNewPgMar().setLeft(BigInteger.valueOf(sizePage));
@@ -61,109 +52,130 @@ public class WordFile {
             document.getDocument().getBody().addNewSectPr().addNewPgMar().setTop(BigInteger.valueOf(sizePage));
             document.getDocument().getBody().addNewSectPr().addNewPgMar().setBottom(BigInteger.valueOf(sizePage));
 
-            table = document.createTable(countRow, 2);
-            table.setWidth("100%");
-            table.setInsideVBorder(XWPFTable.XWPFBorderType.SINGLE, 10, 0, "000000");
-            table.setInsideHBorder(XWPFTable.XWPFBorderType.SINGLE, 10, 0, "000000");
+            setHead("Данные инспекции");
+            setTableData();
 
-            XWPFTableRow inputDateRow = table.getRow(0);
-            XWPFTableCell inputDateCell1 = inputDateRow.getCell(0);
-            XWPFTableCell inputDateCell2 = inputDateRow.getCell(1);
+            setHead("Результат инспекции");
+            setTableAnswer();
 
-            String inputData = "Данные инспекции";
-            setMergeRow(inputDateCell1, inputDateCell2, inputData);
+            document.createParagraph().setPageBreak(true);
+            setHead("Рекомендации");
+            setRecommendation();
 
-            for (int i = 1; i <= numberOfFields; i++) {
-                XWPFTableCell cell1 = table.getRow(i).getCell(0);
-                XWPFTableCell cell2 = table.getRow(i).getCell(1);
-                cell1.setWidth(sizeCell1);
-                cell2.setWidth(sizeCell2);
-                XWPFParagraph paragraph = cell2.getParagraphs().getFirst();
-                paragraph.setAlignment(ParagraphAlignment.CENTER);
-                paragraph.setVerticalAlignment(TextAlignment.CENTER);
+            setHead("Возможные последствия отказа");
+            setTableConsequencesFailure();
 
-                switch (i) {
-                    case 1 -> {
-                        cell1.setText("ID");
-                        cell2.setText(report.getId());
-                    }
-                    case 2 -> {
-                        cell1.setText("Время создания");
-                        cell2.setText(report.getDate());
-                    }
-                    case 3 -> {
-                        cell1.setText("Заказчик");
-                        cell2.setText(report.getClient());
-                    }
-                    case 4 -> {
-                        cell1.setText("Машина");
-                        cell2.setText(report.getAuto());
-                    }
-                    case 5 -> {
-                        cell1.setText("Серийный номер");
-                        cell2.setText(report.getSerialNumber());
-                    }
-                    case 6 -> {
-                        cell1.setText("Хозяйственный номер");
-                        cell2.setText(report.getHouseNumber());
-                    }
-                    case 7 -> {
-                        cell1.setText("Наработка");
-                        cell2.setText(report.getWorkHours());
-                    }
-                    case 8 -> {
-                        cell1.setText("Машина чистая?");
-                        cell2.setText(report.getClear());
-                    }
-                    case 9 -> {
-                        cell1.setText("Исполнитель");
-                        cell2.setText(report.getUserReport());
-                    }
-                }
-            }
+            document.createParagraph().setPageBreak(true);
+            setHead("Коммерческое предложение");
+            setCommercialOffer();
 
-            XWPFTableRow inputResultRow = table.getRow(10);
-            XWPFTableCell inputResultCell1 = inputResultRow.getCell(0);
-            XWPFTableCell inputResultCell2 = inputResultRow.getCell(1);
-            String textResult = "Результат инспекции";
-            setMergeRow(inputResultCell1, inputResultCell2, textResult);
-
-            int row = 11;
-            Map<String, String> tempMap = report.getAnswer();
-            for (String key : tempMap.keySet()) {
-                setDataRow(key, tempMap.get(key), row);
-                row++;
-            }
-
-
-
-
+            document.createParagraph().setPageBreak(true);
+            setHead("Приложение 1");
+            setApposition();
 
             FileOutputStream outputStream = new FileOutputStream(file);
             if (file.exists()) file.delete();
 
-
             document.write(outputStream);
 
-
-        } catch (IOException | InvalidFormatException e) {
+        } catch (IOException e) {
+            System.out.println("Не удалось создать файл");
             throw new RuntimeException(e);
         }
 
     }
 
-    private void setDataRow(String firstText, String secondText, int numberRow) throws IOException, InvalidFormatException {
+    private void setTableBorders(XWPFTable table) {
+        table.setInsideVBorder(XWPFTable.XWPFBorderType.SINGLE, 10, 0, "000000");
+        table.setInsideHBorder(XWPFTable.XWPFBorderType.SINGLE, 10, 0, "000000");
+    }
+
+    private void setHead(String text) {
+        String brown = "FFFF00";
+        String yellow = "BC8F8F";
+        XWPFTable t = document.createTable(1, 2);
+        t.setWidth("100%");
+        setTableBorders(t);
+        XWPFTableCell cell1 = t.getRow(0).getCell(0);
+        XWPFTableCell cell2 = t.getRow(0).getCell(1);
+        cell1.getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.RESTART);
+        cell2.getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.CONTINUE);
+        XWPFParagraph paragraph = cell1.getParagraphs().getFirst();
+        paragraph.setAlignment(ParagraphAlignment.CENTER);
+        XWPFRun run = paragraph.createRun();
+        run.setText(text);
+        run.setColor(brown);
+        run.setFontSize(20);
+        run.setBold(true);
+        cell1.setColor(yellow);
+    }
+
+    private void setTableData() {
+        Class<?> myClass = Report.class;
+        Field[] fields = myClass.getDeclaredFields();
+        int countRows = fields.length - 1;
+        XWPFTable tableData = document.createTable(countRows, 2);
+        tableData.setWidth("100%");
+        setTableBorders(tableData);
+
+        for (int i = 0; i < countRows; i++) {
+            XWPFTableCell cell1 = tableData.getRow(i).getCell(0);
+            XWPFTableCell cell2 = tableData.getRow(i).getCell(1);
+            cell1.setWidth(sizeCell1);
+            cell2.setWidth(sizeCell2);
+            XWPFParagraph paragraph = cell2.getParagraphs().getFirst();
+            paragraph.setAlignment(ParagraphAlignment.CENTER);
+            paragraph.setVerticalAlignment(TextAlignment.CENTER);
+
+            switch (i) {
+                case 0 -> {
+                    cell1.setText("ID");
+                    cell2.setText(report.getId());
+                }
+                case 1 -> {
+                    cell1.setText("Время создания");
+                    cell2.setText(report.getDate());
+                }
+                case 2 -> {
+                    cell1.setText("Заказчик");
+                    cell2.setText(report.getClient());
+                }
+                case 3 -> {
+                    cell1.setText("Машина");
+                    cell2.setText(report.getAuto());
+                }
+                case 4 -> {
+                    cell1.setText("Серийный номер");
+                    cell2.setText(report.getSerialNumber());
+                }
+                case 5 -> {
+                    cell1.setText("Хозяйственный номер");
+                    cell2.setText(report.getHouseNumber());
+                }
+                case 6 -> {
+                    cell1.setText("Наработка");
+                    cell2.setText(report.getWorkHours());
+                }
+                case 7 -> {
+                    cell1.setText("Машина чистая?");
+                    cell2.setText(report.getClear());
+                }
+                case 8 -> {
+                    cell1.setText("Исполнитель");
+                    cell2.setText(report.getUserReport());
+                }
+            }
+        }
+    }
+
+    private void setDataRow(XWPFTable table, String firstText, String secondText, int numberRow) {
         XWPFTableCell cell1 = table.getRow(numberRow).getCell(0);
         XWPFTableCell cell2 = table.getRow(numberRow).getCell(1);
-
+        cell1.setText(firstText);
         cell1.setWidth(sizeCell1);
         cell2.setWidth(sizeCell2);
-        cell1.setText(firstText);
         cell2.setText(secondText);
-
-        XWPFParagraph paragraph = cell2.getParagraphs().getFirst();
-        paragraph.setAlignment(ParagraphAlignment.CENTER);
-
+        cell2.getParagraphs().getFirst().setAlignment(ParagraphAlignment.CENTER);
 
         switch (secondText) {
             case "ОК" -> {
@@ -175,34 +187,20 @@ public class WordFile {
                 cell2.setColor("ADD8E6");
             }
             default -> {
-                if (firstText.contains("Общий вид")){
+                if (firstText.contains("Общий вид")) {
                     cell1.setColor("ADD8E6");
-                   }else {
+                } else {
                     cell1.setColor("FFDAB9");
                     cell2.setColor("FFDAB9");
                 }
             }
         }
-        if (secondText.contains(".jpeg")){
+        if (secondText.contains(".jpeg")) {
             insertImage(cell1, cell2, secondText);
         }
     }
 
-    private void setMergeRow(XWPFTableCell cell1, XWPFTableCell cell2, String text) {
-        cell1.getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.RESTART);
-        cell2.getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.CONTINUE);
-        XWPFParagraph paragraph = cell1.getParagraphs().getFirst();
-        paragraph.setAlignment(ParagraphAlignment.CENTER);
-        XWPFRun run = paragraph.createRun();
-        paragraph.setVerticalAlignment(TextAlignment.AUTO);
-        run.setText(text);
-        run.setColor("FFFF00");
-        run.setFontSize(20);
-        run.setBold(true);
-        cell1.setColor("BC8F8F");
-    }
-
-    private void setHeaderFooter() throws IOException, InvalidFormatException {
+    private void setHeaderFooter() {
 
         String logoFileName = "logo.png";
         String singFileName = "sing.png";
@@ -215,7 +213,12 @@ public class WordFile {
         XWPFParagraph paragraph = header.createParagraph();
         paragraph.setAlignment(ParagraphAlignment.LEFT);
         XWPFRun run = paragraph.createRun();
-        run.addPicture(new FileInputStream(logoFileName), XWPFDocument.PICTURE_TYPE_PNG, logoFileName, Units.toEMU(140), Units.toEMU(30));
+        try {
+            run.addPicture(new FileInputStream(logoFileName), XWPFDocument.PICTURE_TYPE_PNG, logoFileName, Units.toEMU(140), Units.toEMU(30));
+        } catch (InvalidFormatException | IOException e) {
+            System.out.println("Не удалось вставить логотип");
+            throw new RuntimeException(e);
+        }
 
         XWPFFooter footer = headerFooterPolicy.createFooter(XWPFHeaderFooterPolicy.DEFAULT);
         paragraph = footer.createParagraph();
@@ -223,10 +226,16 @@ public class WordFile {
         run = paragraph.createRun();
         run.setText("Дата: " + dateFormat.format(new Date()));
         run.setText("                                     Технический специалист     ");
-        run.addPicture(new FileInputStream(singFileName), XWPFDocument.PICTURE_TYPE_PNG, singFileName, Units.toEMU(30), Units.toEMU(30));
+        try {
+            run.addPicture(new FileInputStream(singFileName), XWPFDocument.PICTURE_TYPE_PNG, singFileName, Units.toEMU(30), Units.toEMU(30));
+        } catch (InvalidFormatException | IOException e) {
+            System.out.println("Не удалось вставить подпись");
+            throw new RuntimeException(e);
+        }
         run.setText("      Полевой А.В.");
     }
-    private void insertImage(XWPFTableCell cell1, XWPFTableCell cell2, String text) throws IOException, InvalidFormatException {
+
+    private void insertImage(XWPFTableCell cell1, XWPFTableCell cell2, String text) {
         cell1.getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.RESTART);
         cell2.getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.CONTINUE);
 
@@ -237,9 +246,117 @@ public class WordFile {
         run.addBreak();
 
         String[] fileName = text.split(", ");
-        int size = (int) ((sizePage/1.3)/ fileName.length);
+        int size = (int) ((sizePage / 1.3) / fileName.length);
         for (String s : fileName) {
-            run.addPicture(new FileInputStream(s), XWPFDocument.PICTURE_TYPE_JPEG, s, Units.toEMU(size), Units.toEMU(size));
+            try {
+                run.addPicture(new FileInputStream(s), XWPFDocument.PICTURE_TYPE_JPEG, s, Units.toEMU(size), Units.toEMU(size));
+            } catch (InvalidFormatException | IOException e) {
+                System.out.println("Не удалось вставить фото: " + s);
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private void setListFailure() {
+        for (String key : report.getAnswer().keySet()) {
+            if (key.contains("Неисправность")) {
+                String[] temp = report.getAnswer().get(key).split(", ");
+                listFailure.addAll(Arrays.asList(temp));
+            }
+        }
+    }
+
+    private void setRecommendation() {
+        XWPFParagraph paragraph = document.createParagraph();
+        XWPFRun run = paragraph.createRun();
+        for (String failure : listFailure) {
+            run.addBreak();
+            if (failure.toLowerCase().contains("отсутствует")){
+                failure = failure.replace("отсутствует ", "");
+                failure = failure.replace("Отсутствует ", "");
+                run.setText("Установить " + failure + ".");
+            }else {
+                run.setText("Устранить " + failure.toLowerCase() + ".");
+            }
+        }
+        run.addBreak();
+    }
+
+    private void setTableConsequencesFailure() {
+        document.createParagraph().createRun();
+        int countRows = listFailure.size() + 1;
+        XWPFTable tableConsequencesFailure = document.createTable(countRows, 2);
+        tableConsequencesFailure.setWidth("100%");
+        setTableBorders(tableConsequencesFailure);
+        XWPFTableCell cell1 = tableConsequencesFailure.getRow(0).getCell(0);
+        XWPFTableCell cell2 = tableConsequencesFailure.getRow(0).getCell(1);
+        cell1.setWidth(sizeCell1);
+        cell1.setText("Возможные последствия отказа");
+        cell1.setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+        cell1.getParagraphs().getFirst().setAlignment(ParagraphAlignment.CENTER);
+        cell2.setWidth(sizeCell2);
+        cell2.setText("Уровень последствий отказа (приложение 1)");
+        int row = 1;
+        for (String failure : listFailure) {
+            tableConsequencesFailure.getRow(row++).getCell(0).setText(failure + " может привезти к ");
+        }
+    }
+
+    private void setTableAnswer() {
+        int countRows = report.getAnswer().size();
+        XWPFTable tableAnswer = document.createTable(countRows, 2);
+        Map<String, String> tempMap = report.getAnswer();
+        int row = 0;
+        for (String key : tempMap.keySet()) {
+            setDataRow(tableAnswer, key, tempMap.get(key), row++);
+        }
+    }
+
+    private void setCommercialOffer() {
+        XWPFParagraph pLeft = document.createParagraph();
+        pLeft.setAlignment(ParagraphAlignment.RIGHT);
+        XWPFRun rLeft = pLeft.createRun();
+        rLeft.setText("185013, г. Петрозаводск");
+        rLeft.addBreak();
+        rLeft.setText("ул. Новосулажгорская, 30, офис 7");
+        rLeft.addBreak();
+        rLeft.setText("ИНН 1001262650");
+        rLeft.addBreak();
+        rLeft.setText("КПП 100101001");
+        rLeft.addBreak();
+        rLeft.setText("f.shestovec@mail.ru");
+        rLeft.addBreak();
+        rLeft.setText("+7 911 426 02 00");
+        rLeft.addBreak();
+
+        XWPFRun run = document.createParagraph().createRun();
+        run.setText("Предлагаем вам профессиональную техническую инспекцию," +
+                " которая поможет выявить и устранить возможные проблемы и повысить безопасность и эффективность" +
+                " работы вашей техники.");
+        run.addBreak();
+        run.addBreak();
+        run.addBreak();
+        run.addBreak();
+        run.setText("Цены и сроки поставки действительны 10 дней со дня подачи.");
+        run.addBreak();
+        run.setText("Согласовано, должность: __________________ Ф.И.О.: _____________________  Дата: __________");
+        run.addBreak();
+        run.setText("Мы уверены, что наша техническая инспекция поможет вам повысить безопасность и эффективность" +
+                " работы вашей техники, а также сэкономить время и деньги. ");
+        run.addBreak();
+        run.setText("Обращайтесь к нам и убедитесь в этом сами!");
+
+
+    }
+
+    private void setApposition() {
+        XWPFRun run = document.createParagraph().createRun();
+        run.addBreak();
+        try {
+            run.addPicture(new FileInputStream("rating.png"), XWPFDocument.PICTURE_TYPE_JPEG,
+                    "rating.png", Units.toEMU(sizePage / 1.3), Units.toEMU(sizePage / 1.9));
+        } catch (InvalidFormatException | IOException e) {
+            System.out.println("Не удалось вставить таблицу рейтенгов");
         }
     }
 }
