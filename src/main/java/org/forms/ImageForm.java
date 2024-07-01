@@ -37,13 +37,17 @@ public class ImageForm {
                 for (int i = 0; i < arrImage.length; i++) {
 
                     try {
-//                        Desktop desktop = Desktop.getDesktop();
-//                        desktop.browse(URI.create(arrImage[i]));
-//                        TimeUnit.SECONDS.sleep(5);
-//                        BufferedImage image = new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
-//                        BufferedImage screen = image.getSubimage(200, 110, 1200, 700);
                         String imageFileName = folder + "/" + number + "." + (i + 1) + ".jpeg";
-      //                  ImageIO.write(screen, "jpeg", new File(imageFileName));
+                        File file = new File(imageFileName);
+                        if (!file.exists()) {
+                            Desktop desktop = Desktop.getDesktop();
+                            desktop.browse(URI.create(arrImage[i]));
+                            TimeUnit.SECONDS.sleep(5);
+                            BufferedImage image = new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
+                            BufferedImage screen = image.getSubimage(200, 110, 1200, 700);
+                            ImageIO.write(screen, "jpeg", new File(imageFileName));
+                        }
+
                         if (map.get(key).isEmpty()) {
                             map.put(key, imageFileName);
                         } else {
