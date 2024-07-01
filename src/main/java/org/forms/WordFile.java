@@ -34,13 +34,13 @@ public class WordFile {
                 + report.getHouseNumber() +
                 ".docx";
         String fileName = folderName + "/Отчет " + textFileName;
-        //  String newFileName = folderName + "/Новый отчет " + textFileName;
+          String newFileName = folderName + "/Новый отчет " + textFileName;
 
         File file;
         file = new File(fileName);
-//        if (file.exists()) {
-//            file = new File(newFileName);
-//        }
+        if (file.exists()) {
+            file = new File(newFileName);
+        }
 
         try {
             document = new XWPFDocument();
@@ -74,7 +74,6 @@ public class WordFile {
             setApposition();
 
             FileOutputStream outputStream = new FileOutputStream(file);
-            if (file.exists()) file.delete();
 
             document.write(outputStream);
 
@@ -91,8 +90,8 @@ public class WordFile {
     }
 
     private void setHead(String text) {
-        String brown = "FFFF00";
-        String yellow = "BC8F8F";
+        String brown = "4B2942";
+        String yellow = "F2AF00";
         XWPFTable t = document.createTable(1, 2);
         t.setWidth("100%");
         setTableBorders(t);
@@ -104,10 +103,10 @@ public class WordFile {
         paragraph.setAlignment(ParagraphAlignment.CENTER);
         XWPFRun run = paragraph.createRun();
         run.setText(text);
-        run.setColor(brown);
+        run.setColor(yellow);
         run.setFontSize(20);
         run.setBold(true);
-        cell1.setColor(yellow);
+        cell1.setColor(brown);
     }
 
     private void setTableData() {
@@ -246,10 +245,12 @@ public class WordFile {
         run.addBreak();
 
         String[] fileName = text.split(", ");
-        int size = (int) ((sizePage / 1.3) / fileName.length);
+        int width = (int) ((sizePage / 1.3) / fileName.length);
+        int height = (int) ((sizePage / 1.8) / fileName.length);
         for (String s : fileName) {
             try {
-                run.addPicture(new FileInputStream(s), XWPFDocument.PICTURE_TYPE_JPEG, s, Units.toEMU(size), Units.toEMU(size));
+                run.addPicture(new FileInputStream(s), XWPFDocument.PICTURE_TYPE_JPEG, s,
+                        Units.toEMU(width), Units.toEMU(height));
             } catch (InvalidFormatException | IOException e) {
                 System.out.println("Не удалось вставить фото: " + s);
                 throw new RuntimeException(e);
@@ -318,7 +319,7 @@ public class WordFile {
         XWPFRun rLeft = pLeft.createRun();
         rLeft.setText("185013, г. Петрозаводск");
         rLeft.addBreak();
-        rLeft.setText("ул. Новосулажгорская, 30, офис 7");
+        rLeft.setText("пр. Лесной, 49Б");
         rLeft.addBreak();
         rLeft.setText("ИНН 1001262650");
         rLeft.addBreak();
