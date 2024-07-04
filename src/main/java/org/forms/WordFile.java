@@ -177,7 +177,7 @@ public class WordFile {
         cell2.getParagraphs().getFirst().setAlignment(ParagraphAlignment.CENTER);
 
         switch (secondText) {
-            case "ОК" -> {
+            case "ОК", "Да", "Норма", "Нет" -> {
                 cell1.setColor("90EE90");
                 cell2.setColor("90EE90");
             }
@@ -231,7 +231,7 @@ public class WordFile {
             System.out.println("Не удалось вставить подпись");
             throw new RuntimeException(e);
         }
-        run.setText("      Полевой А.В.");
+        run.setText("      Полевой А. В.");
     }
 
     private void insertImage(XWPFTableCell cell1, XWPFTableCell cell2, String text) {
