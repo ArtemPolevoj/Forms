@@ -337,6 +337,7 @@ public class WordFile {
         run.addBreak();
         run.addBreak();
         run.addBreak();
+        run.setText("Предполагаемое время работы -    ч.ч.");
         run.addBreak();
         run.setText("Цены и сроки поставки действительны 10 дней со дня подачи.");
         run.addBreak();
