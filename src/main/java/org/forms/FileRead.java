@@ -43,14 +43,19 @@ public class FileRead {
                         case "Время создания" -> report.setDate(parsDate(getTextTempCell(cell)));
                         case "## Заказчик" -> report.setClient(getTextTempCell(cell));
                         case "## Машина" -> report.setAuto(getTextTempCell(cell));
+                        case "## Машина (другое)" ->{
+                            if (report.getAuto().equals("Другое")){
+                                report.setAuto(getTextTempCell(cell));
+                            }
+                        }
                         case "## Серийный номер" -> report.setSerialNumber(getTextTempCell(cell));
                         case "## Хозяйственный номер" -> report.setHouseNumber(getTextTempCell(cell));
                         case "## Наработка" -> report.setWorkHours(getTextTempCell(cell));
                         case "## Машина чистая?" -> report.setClear(getTextTempCell(cell));
                         case "## Исполнитель" -> report.setUserReport(getTextTempCell(cell));
                         case "## 601 Номера устранённых неисправностей" -> {}
-                        case "## Оставить пожелание по использованию формы" -> {}
-                        case "## Пожелания" -> {}
+                        case "## Оставить пожелание по использованию формы" -> { }
+                        case "## Пожелания" -> {  }
                         default -> {
                             if (!getTextTempCell(cell).isEmpty()) {
                                 setAnswer(cell);
