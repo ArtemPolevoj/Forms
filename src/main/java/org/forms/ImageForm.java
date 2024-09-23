@@ -21,6 +21,7 @@ public class ImageForm {
     public void setImageAnswer() {
         Map<String, String> map = report.getAnswer();
         String number;
+        String[] arrImage;
         for (String key : map.keySet()) {
             if (key.contains("Фото") || key.equals("Общий вид машины")) {
                 if (key.contains("Фото")) {
@@ -28,7 +29,12 @@ public class ImageForm {
                 } else {
                     number = "O";
                 }
-                String[] arrImage = map.get(key).split(", ");
+                if (map.get(key).contains(",")){
+                    arrImage = map.get(key).split(", ");
+                }else {
+                    arrImage = map.get(key).split(" ");
+                }
+
                 if (map.get(key).contains("https://")) {
                     String valueTemp = "";
                     map.put(key, valueTemp);
@@ -45,6 +51,9 @@ public class ImageForm {
                             TimeUnit.SECONDS.sleep(5);
                             BufferedImage image = new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
                             BufferedImage screen = image.getSubimage(200, 110, 1200, 700);
+
+                         //   BufferedImage screen = image.getSubimage(610, 350, 300, 200);// for Egor
+
                             ImageIO.write(screen, "jpeg", new File(imageFileName));
                         }
 
