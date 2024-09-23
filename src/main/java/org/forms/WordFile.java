@@ -177,7 +177,7 @@ public class WordFile {
         cell2.getParagraphs().getFirst().setAlignment(ParagraphAlignment.CENTER);
 
         switch (secondText) {
-            case "ОК", "Да", "Норма", "Нет" -> {
+            case "ОК","Ok","ok","Ок", "Да", "Норма", "Нет", "В норме" -> {
                 cell1.setColor("90EE90");
                 cell2.setColor("90EE90");
             }
