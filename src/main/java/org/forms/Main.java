@@ -4,8 +4,10 @@ import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
-        String fileNameExcel = "C:/Users/artem/Downloads/2024-06-12 Vizual'nyi osmotr bul'dozera ChETRA 1.2.xlsx";
-        String mainFolder = "C:/Users/artem/Desktop/Test";
+        String fileNameExcel = new OpenFile().getSelectedFile().getPath();
+       // String fileNameExcel = "C:/Users/user/Downloads/2024-09-23 Vizual'nyi osmotr bul'dozera ChETRA 1.2.xlsx";
+      //  String mainFolder = "C:/Users/user/Desktop/Test";
+        String mainFolder =  "C:/Users/user/YandexDisk-techr.22/Отдел Сервиса/Тех документация по ремонту и ТО/Инспекции";
         FileRead fileRead = new FileRead(fileNameExcel);
         Report report = fileRead.getReport();
         Folder folder = new Folder(report, mainFolder);
