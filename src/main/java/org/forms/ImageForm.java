@@ -19,6 +19,7 @@ public class ImageForm {
     }
 
     public void setImageAnswer() {
+        long screenDelay = 4L;
         Map<String, String> map = report.getAnswer();
         String number;
         String[] arrImage;
@@ -48,7 +49,7 @@ public class ImageForm {
                         if (!file.exists()) {
                             Desktop desktop = Desktop.getDesktop();
                             desktop.browse(URI.create(arrImage[i]));
-                            TimeUnit.SECONDS.sleep(5);
+                            TimeUnit.SECONDS.sleep(screenDelay);
                             BufferedImage image = new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
                             BufferedImage screen = image.getSubimage(200, 110, 1200, 700);
 
