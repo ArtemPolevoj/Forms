@@ -7,11 +7,13 @@ import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.*;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
+import java.awt.*;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 
 public class WordFile {
     private final Report report;
@@ -42,7 +44,7 @@ public class WordFile {
             file = new File(newFileName);
         }
 
-        try {
+        try(FileOutputStream outputStream = new FileOutputStream(file)) {
             document = new XWPFDocument();
 
             setHeaderFooter();
@@ -73,9 +75,12 @@ public class WordFile {
             setHead("Приложение 1");
             setApposition();
 
-            FileOutputStream outputStream = new FileOutputStream(file);
-
             document.write(outputStream);
+
+            if (file.exists()) {
+                Desktop desktop = Desktop.getDesktop();
+                desktop.open(file);
+            }
 
         } catch (IOException e) {
             System.out.println("Не удалось создать файл");
