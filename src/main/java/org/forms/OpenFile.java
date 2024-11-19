@@ -9,10 +9,10 @@ public class OpenFile {
 
     private void getFile() {
         JFileChooser fc = new JFileChooser();
-        fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         fc.setMultiSelectionEnabled(false);
         fc.setCurrentDirectory(new File("C:/Users/user/Downloads"));
         fc.setAcceptAllFileFilterUsed(false);
+        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fc.addChoosableFileFilter(new FileNameExtensionFilter
                 ("Excel.xlsx", "xlsx"));
         fc.setDialogTitle("Выберете файл для обработки.");
