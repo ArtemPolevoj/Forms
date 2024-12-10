@@ -94,11 +94,11 @@ public class FileRead {
         }
         if (answer.containsKey(key)) {
             String tempValue = answer.get(key);
-            if (tempValue.contains(",")){
-                newValue = tempValue + " " + value;
-            }else {
+          //  if (tempValue.contains(",")){
+          //      newValue = tempValue + ", " + value;
+          //  }else {
                 newValue = tempValue + ", " + value;
-            }
+         //   }
             answer.put(key, newValue);
         } else {
             answer.put(key, value);
