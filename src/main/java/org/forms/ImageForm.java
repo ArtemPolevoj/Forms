@@ -1,76 +1,76 @@
 package org.forms;
 
-
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class ImageForm {
-    private final Report report;
+    private final Map<String, String> mapAnswer;
     private final String folder;
 
-    public ImageForm(Report report, String folder) {
-        this.report = report;
+    public ImageForm(Map<String, String> mapAnswer, String folder) {
+        this.mapAnswer = mapAnswer;
         this.folder = folder;
     }
 
+    public Map<String, String> getMapAnswer() {
+        return mapAnswer;
+    }
+
     public void setImageAnswer() {
-        long screenDelay = 4L;
-        Map<String, String> map = report.getAnswer();
         String number;
         String[] arrImage;
-        for (String key : map.keySet()) {
+        String url = "https://storage.yandexcloud.net/art-forms-baket/";
+        for (String key : mapAnswer.keySet()) {
             if (key.contains("Фото") || key.equals("Общий вид машины")) {
                 if (key.contains("Фото")) {
                     number = key.substring(0, 3);
                 } else {
                     number = "O";
                 }
-                if (map.get(key).contains(",")){
-                    arrImage = map.get(key).split(", ");
-                }else {
-                    arrImage = map.get(key).split(" ");
-                }
-
-                if (map.get(key).contains("https://")) {
-                    String valueTemp = "";
-                    map.put(key, valueTemp);
-                }
-
+                StringBuilder value = new StringBuilder();
+                arrImage = mapAnswer.get(key).split(", ");
                 for (int i = 0; i < arrImage.length; i++) {
+                    String name = arrImage[i];
+                    String fileUrl = url + arrImage[i];
+                    String imageFileName = folder + "/" + number + "." + (i + 1) + ".jpeg";
+                    File temp = new File(imageFileName);
+                    if (!temp.exists()) {
 
-                    try {
-                        String imageFileName = folder + "/" + number + "." + (i + 1) + ".jpeg";
-                        File file = new File(imageFileName);
-                        if (!file.exists()) {
-                            Desktop desktop = Desktop.getDesktop();
-                            desktop.browse(URI.create(arrImage[i]));
-                            TimeUnit.SECONDS.sleep(screenDelay);
-                            BufferedImage image = new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
-                            BufferedImage screen = image.getSubimage(200, 110, 1200, 700);
+                        try (InputStream in = new URI(fileUrl).toURL().openStream();
+                             OutputStream out = Files.newOutputStream(Paths.get(imageFileName))) {
+                            byte[] buffer = new byte[1024];
+                            int bytesRead;
+                            while ((bytesRead = in.read(buffer)) != -1) {
+                                out.write(buffer, 0, bytesRead);
+                            }
+                            if (i == 0) {
+                                value = new StringBuilder(imageFileName);
+                            }else {
+                                value.append(", ").append(imageFileName);
+                            }
+                            mapAnswer.put(key, value.toString());
 
-                         //   BufferedImage screen = image.getSubimage(610, 350, 300, 200);// for Egor
-
-                            ImageIO.write(screen, "jpeg", new File(imageFileName));
+                        } catch (Exception e) {
+                            System.out.println("Не удалось обработать " + name);
+                            throw new RuntimeException(e);
                         }
-
-                        if (map.get(key).isEmpty()) {
-                            map.put(key, imageFileName);
-                        } else {
-                            String value = map.get(key);
-                            value = value + ", " + imageFileName;
-                            map.put(key, value);
-                        }
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
+                    } else {
+                       if (!mapAnswer.get(key).contains(imageFileName)){
+                           if (i == 0) {
+                               value = new StringBuilder(imageFileName);
+                           }else {
+                               value.append(", ").append(imageFileName);
+                           }
+                           mapAnswer.put(key, value.toString());
+                       }
                     }
                 }
             }
         }
-        report.setAnswer(map);
     }
 }

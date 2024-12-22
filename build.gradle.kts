@@ -12,11 +12,7 @@ repositories {
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
-// https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
     implementation("org.apache.poi:poi-ooxml:5.2.5")
-// https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java
-    implementation("org.seleniumhq.selenium:selenium-java:4.22.0")
-
 
 }
 

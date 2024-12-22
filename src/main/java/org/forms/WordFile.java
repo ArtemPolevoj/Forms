@@ -9,34 +9,35 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
 import java.awt.*;
 import java.io.*;
-import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 
 public class WordFile {
-    private final Report report;
+    private final Map<String, String> mapAnswer;
     private final String folderName;
     private XWPFDocument document;
     private final String sizeCell1 = "70%";
     private final String sizeCell2 = "30%";
     private final int sizePage = 700;
+    private final List<String> listQuestion;
+    private final int countFirstRow = 9;
     private final List<String> listFailure = new ArrayList<>();
 
-    public WordFile(Report report, String folderName) {
-        this.report = report;
+    public WordFile(Map<String, String> mapAnswer, String folderName) {
+        this.mapAnswer = mapAnswer;
         this.folderName = folderName;
-        setListFailure();
+        listQuestion = new ArrayList<>(mapAnswer.keySet());
     }
 
     public void createFile() {
-        String textFileName = report.getAuto() + " "
-                + report.getSerialNumber() + "_"
-                + report.getHouseNumber() +
+        String textFileName = mapAnswer.get(MachineData.AUTO.getData()) + " "
+                + mapAnswer.get(MachineData.SERIAL_NUMBER.getData()) + "_"
+                + mapAnswer.get(MachineData.HOUSE_NUMBER.getData()) +
                 ".docx";
         String fileName = folderName + "/Отчет " + textFileName;
-          String newFileName = folderName + "/Новый отчет " + textFileName;
+        String newFileName = folderName + "/Новый отчет " + textFileName;
 
         File file;
         file = new File(fileName);
@@ -44,7 +45,7 @@ public class WordFile {
             file = new File(newFileName);
         }
 
-        try(FileOutputStream outputStream = new FileOutputStream(file)) {
+        try (FileOutputStream outputStream = new FileOutputStream(file)) {
             document = new XWPFDocument();
 
             setHeaderFooter();
@@ -115,14 +116,11 @@ public class WordFile {
     }
 
     private void setTableData() {
-        Class<?> myClass = Report.class;
-        Field[] fields = myClass.getDeclaredFields();
-        int countRows = fields.length - 1;
-        XWPFTable tableData = document.createTable(countRows, 2);
+        XWPFTable tableData = document.createTable(countFirstRow, 2);
         tableData.setWidth("100%");
         setTableBorders(tableData);
 
-        for (int i = 0; i < countRows; i++) {
+        for (int i = 0; i < countFirstRow; i++) {
             XWPFTableCell cell1 = tableData.getRow(i).getCell(0);
             XWPFTableCell cell2 = tableData.getRow(i).getCell(1);
             cell1.setWidth(sizeCell1);
@@ -131,44 +129,10 @@ public class WordFile {
             paragraph.setAlignment(ParagraphAlignment.CENTER);
             paragraph.setVerticalAlignment(TextAlignment.CENTER);
 
-            switch (i) {
-                case 0 -> {
-                    cell1.setText("ID");
-                    cell2.setText(report.getId());
-                }
-                case 1 -> {
-                    cell1.setText("Время создания");
-                    cell2.setText(report.getDate());
-                }
-                case 2 -> {
-                    cell1.setText("Заказчик");
-                    cell2.setText(report.getClient());
-                }
-                case 3 -> {
-                    cell1.setText("Машина");
-                    cell2.setText(report.getAuto());
-                }
-                case 4 -> {
-                    cell1.setText("Серийный номер");
-                    cell2.setText(report.getSerialNumber());
-                }
-                case 5 -> {
-                    cell1.setText("Хозяйственный номер");
-                    cell2.setText(report.getHouseNumber());
-                }
-                case 6 -> {
-                    cell1.setText("Наработка");
-                    cell2.setText(report.getWorkHours());
-                }
-                case 7 -> {
-                    cell1.setText("Машина чистая?");
-                    cell2.setText(report.getClear());
-                }
-                case 8 -> {
-                    cell1.setText("Исполнитель");
-                    cell2.setText(report.getUserReport());
-                }
-            }
+            String question = listQuestion.get(i);
+            cell1.setText(question);
+            cell2.setText(mapAnswer.get(question));
+
         }
     }
 
@@ -182,7 +146,7 @@ public class WordFile {
         cell2.getParagraphs().getFirst().setAlignment(ParagraphAlignment.CENTER);
 
         switch (secondText) {
-            case "ОК","Ok","ok","Ок", "Да", "Норма", "Нет", "В норме" -> {
+            case "ОК", "Ok", "ok", "Ок", "Да", "Норма", "Нет", "В норме" -> {
                 cell1.setColor("90EE90");
                 cell2.setColor("90EE90");
             }
@@ -263,29 +227,24 @@ public class WordFile {
         }
     }
 
-    private void setListFailure() {
-        for (String key : report.getAnswer().keySet()) {
-            if (key.contains("Неисправность")) {
-                String[] temp = report.getAnswer().get(key).split(", ");
-                listFailure.addAll(Arrays.asList(temp));
-            }
-        }
-    }
 
     private void setRecommendation() {
         XWPFParagraph paragraph = document.createParagraph();
         XWPFRun run = paragraph.createRun();
-        for (String failure : listFailure) {
-            run.addBreak();
-            if (failure.toLowerCase().contains("отсутствует")){
-                failure = failure.replace("отсутствует ", "");
-                failure = failure.replace("Отсутствует ", "");
-                run.setText("Установить " + failure + ".");
-            }else {
-                run.setText("Устранить " + failure.toLowerCase() + ".");
+        for (String question : listQuestion) {
+            if (question.contains(MachineData.FAULT.getData())){
+                String answer = mapAnswer.get(question);
+                listFailure.add(answer);
+                if (answer.contains("отсутствует")) {
+                    answer = answer.replace("отсутствует ", "");
+                    answer = answer.replace("Отсутствует ", "");
+                    run.setText("Установить " + answer + ".");
+                } else {
+                    run.setText("Устранить " + answer.toLowerCase() + ".");
+                }
+                run.addBreak();
             }
         }
-        run.addBreak();
     }
 
     private void setTableConsequencesFailure() {
@@ -304,17 +263,16 @@ public class WordFile {
         cell2.setText("Уровень последствий отказа (приложение 1)");
         int row = 1;
         for (String failure : listFailure) {
-            tableConsequencesFailure.getRow(row++).getCell(0).setText(failure + " может привезти к ");
+                  tableConsequencesFailure.getRow(row++).getCell(0).setText(failure + " может привезти к ");
         }
     }
 
     private void setTableAnswer() {
-        int countRows = report.getAnswer().size();
+        int countRows = listQuestion.size() - countFirstRow;
         XWPFTable tableAnswer = document.createTable(countRows, 2);
-        Map<String, String> tempMap = report.getAnswer();
         int row = 0;
-        for (String key : tempMap.keySet()) {
-            setDataRow(tableAnswer, key, tempMap.get(key), row++);
+        for (int i = countFirstRow; i < listQuestion.size(); i++) {
+            setDataRow(tableAnswer, listQuestion.get(i), mapAnswer.get(listQuestion.get(i)), row++);
         }
     }
 

@@ -13,54 +13,29 @@ import java.util.*;
 
 public class FileRead {
     private final String fileName;
-    private Report report;
     private Sheet sheet;
-    private final Map<String, String> answer = new LinkedHashMap<>();
+    private final Map<String, String> mapAnswer = new LinkedHashMap<>();
 
     public FileRead(String fileName) {
         this.fileName = fileName;
+        setMapAnswer();
     }
 
-    public Report getReport() {
-        setReport();
-        report.setAnswer(answer);
-        return report;
+    public Map<String, String> getMapAnswer() {
+        return mapAnswer;
     }
 
-    private void setReport() {
-        report = new Report();
+    private void setMapAnswer() {
         try (XSSFWorkbook workbook = new XSSFWorkbook(
                 new FileInputStream(fileName))) {
 
             sheet = workbook.getSheet("Sheet");
             for (Row row : sheet) {
-
                 Iterator<Cell> cellIterator = row.cellIterator();
                 while (cellIterator.hasNext()) {
                     Cell cell = cellIterator.next();
-                    switch (cell.toString()) {
-                        case "ID" -> report.setId(getTextTempCell(cell));
-                        case "Время создания" -> report.setDate(parsDate(getTextTempCell(cell)));
-                        case "## Заказчик" -> report.setClient(getTextTempCell(cell));
-                        case "## Машина" -> report.setAuto(getTextTempCell(cell));
-                        case "## Машина (другое)" ->{
-                            if (report.getAuto().equals("Другое")){
-                                report.setAuto(getTextTempCell(cell));
-                            }
-                        }
-                        case "## Серийный номер" -> report.setSerialNumber(getTextTempCell(cell));
-                        case "## Хозяйственный номер" -> report.setHouseNumber(getTextTempCell(cell));
-                        case "## Наработка" -> report.setWorkHours(getTextTempCell(cell));
-                        case "## Машина чистая?" -> report.setClear(getTextTempCell(cell));
-                        case "## Исполнитель" -> report.setUserReport(getTextTempCell(cell));
-                        case "## 601 Номера устранённых неисправностей" -> {}
-                        case "## Оставить пожелание по использованию формы" -> { }
-                        case "## Пожелания" -> {  }
-                        default -> {
-                            if (!getTextTempCell(cell).isEmpty()) {
-                                setAnswer(cell);
-                            }
-                        }
+                    if (!getTextTempCell(cell).isEmpty()) {
+                        setAnswer(cell);
                     }
                 }
             }
@@ -73,7 +48,7 @@ public class FileRead {
         int colGet = cell.getColumnIndex();
         int rowGet = cell.getRowIndex();
         try {
-            return sheet.getRow(rowGet + 1).getCell(colGet).toString();
+            return sheet.getRow(rowGet + 1).getCell(colGet).getStringCellValue();
         } catch (NullPointerException e) {
             return "";
         }
@@ -85,28 +60,49 @@ public class FileRead {
         String newValue;
         if (temp.contains("[")) {
             key = temp.substring(3, temp.length() - 4);
-        } else {
+
+        } else if (temp.contains("#")) {
             key = temp.substring(3);
+        } else {
+            key = temp;
         }
         String value = getTextTempCell(cell);
         if (value.contains("#")) {
             value = value.substring(3);
         }
-        if (answer.containsKey(key)) {
-            String tempValue = answer.get(key);
-          //  if (tempValue.contains(",")){
-          //      newValue = tempValue + ", " + value;
-          //  }else {
-                newValue = tempValue + ", " + value;
-         //   }
-            answer.put(key, newValue);
+        if (value.contains("http")) {
+            String[] arr = value.split(", ");
+            StringBuilder files = new StringBuilder();
+
+
+            for (int i = 0; i < arr.length; i++) {
+                int beginIndex = arr[i].indexOf("baket%2F") + 8;
+                if (i == 0) {
+                    files.append(arr[i].substring(beginIndex));
+                } else {
+                    files.append(", ")
+                            .append(arr[i].substring(beginIndex));
+                }
+            }
+            value = String.valueOf(files);
+        }
+
+        if (mapAnswer.containsKey(key)) {
+            String tempValue = mapAnswer.get(key);
+            newValue = tempValue + ", " + value;
+            mapAnswer.put(key, newValue);
         } else {
-            answer.put(key, value);
+            if (key.contains(MachineData.DATE.getData())) {
+                mapAnswer.put(key, parsDate(value));
+            } else {
+                mapAnswer.put(key, value);
+            }
         }
     }
-    private String parsDate(String inputDate){
+
+    private String parsDate(String inputDate) {
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        SimpleDateFormat outputFormat = new SimpleDateFormat("dd.MM.yyyy");
+        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date date;
         try {
             date = inputFormat.parse(inputDate);
