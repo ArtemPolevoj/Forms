@@ -37,7 +37,6 @@ public class FileWrite {
                             cellNew.setCellValue(LocalDate.parse(mapAnswer.get(celValue)));
                         } else {
                             cellNew.setCellValue(mapAnswer.get(celValue));
-                            mapAnswer.remove(celValue);
                         }
                     }
                 }

@@ -20,14 +20,15 @@ public class Folder {
         this.folder = folder;
         setDirectory();
     }
-    private void setDirectory(){
+
+    private void setDirectory() {
         String folderAuto = folder + "/" + mapAnswer.get(MachineData.AUTO.getData());
         folderAutoNumber = folderAuto + "/" + mapAnswer.get(MachineData.AUTO.getData()) + " "
                 + mapAnswer.get(MachineData.SERIAL_NUMBER.getData()) + "_" + mapAnswer.get(MachineData.HOUSE_NUMBER.getData());
         folderDate = folderAutoNumber + "/" + parsDate(mapAnswer.get(MachineData.DATE.getData()));
 
         File dirAuto = new File(folderAuto);
-        if (!dirAuto.exists()){
+        if (!dirAuto.exists()) {
             try {
                 Files.createDirectory(Path.of(folderAuto));
             } catch (IOException e) {
@@ -35,7 +36,7 @@ public class Folder {
             }
         }
         File dirAutoNumber = new File(folderAutoNumber);
-        if (!dirAutoNumber.exists()){
+        if (!dirAutoNumber.exists()) {
             try {
                 Files.createDirectory(Path.of(folderAutoNumber));
             } catch (IOException e) {
@@ -43,7 +44,7 @@ public class Folder {
             }
         }
         File dirDate = new File(folderDate);
-        if (!dirDate.exists()){
+        if (!dirDate.exists()) {
             try {
                 Files.createDirectory(Path.of(folderDate));
             } catch (IOException e) {
@@ -59,6 +60,7 @@ public class Folder {
     public String getDirDate() {
         return folderDate;
     }
+
     private String parsDate(String inputDate) {
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat outputFormat = new SimpleDateFormat("dd.MM.yyyy");

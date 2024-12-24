@@ -22,7 +22,7 @@ public class FileRead {
     }
 
     public Map<String, String> getMapAnswer() {
-        return mapAnswer;
+        return new LinkedHashMap<>(mapAnswer);
     }
 
     private void setMapAnswer() {

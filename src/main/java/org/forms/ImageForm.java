@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ImageForm {
@@ -18,10 +19,11 @@ public class ImageForm {
     }
 
     public Map<String, String> getMapAnswer() {
-        return mapAnswer;
+        setImageAnswer();
+        return new LinkedHashMap<>(mapAnswer);
     }
 
-    public void setImageAnswer() {
+    private void setImageAnswer() {
         String number;
         String[] arrImage;
         String url = "https://storage.yandexcloud.net/art-forms-baket/";
@@ -50,7 +52,7 @@ public class ImageForm {
                             }
                             if (i == 0) {
                                 value = new StringBuilder(imageFileName);
-                            }else {
+                            } else {
                                 value.append(", ").append(imageFileName);
                             }
                             mapAnswer.put(key, value.toString());
@@ -60,14 +62,14 @@ public class ImageForm {
                             throw new RuntimeException(e);
                         }
                     } else {
-                       if (!mapAnswer.get(key).contains(imageFileName)){
-                           if (i == 0) {
-                               value = new StringBuilder(imageFileName);
-                           }else {
-                               value.append(", ").append(imageFileName);
-                           }
-                           mapAnswer.put(key, value.toString());
-                       }
+                        if (!mapAnswer.get(key).contains(imageFileName)) {
+                            if (i == 0) {
+                                value = new StringBuilder(imageFileName);
+                            } else {
+                                value.append(", ").append(imageFileName);
+                            }
+                            mapAnswer.put(key, value.toString());
+                        }
                     }
                 }
             }

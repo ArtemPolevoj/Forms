@@ -232,7 +232,7 @@ public class WordFile {
         XWPFParagraph paragraph = document.createParagraph();
         XWPFRun run = paragraph.createRun();
         for (String question : listQuestion) {
-            if (question.contains(MachineData.FAULT.getData())){
+            if (question.contains(MachineData.FAULT.getData())) {
                 String answer = mapAnswer.get(question);
                 listFailure.add(answer);
                 if (answer.contains("отсутствует")) {
@@ -263,7 +263,7 @@ public class WordFile {
         cell2.setText("Уровень последствий отказа (приложение 1)");
         int row = 1;
         for (String failure : listFailure) {
-                  tableConsequencesFailure.getRow(row++).getCell(0).setText(failure + " может привезти к ");
+            tableConsequencesFailure.getRow(row++).getCell(0).setText(failure + " может привезти к ");
         }
     }
 
@@ -300,8 +300,8 @@ public class WordFile {
         run.addBreak();
         run.addBreak();
         run.addBreak();
-        run.setText("Предполагаемое время работы -    ч.ч.");
-        run.addBreak();
+//        run.setText("Предполагаемое время работы -    ч.ч.");
+//        run.addBreak();
         run.setText("Цены и сроки поставки действительны 10 дней со дня подачи.");
         run.addBreak();
         run.setText("Согласовано, должность: __________________ Ф.И.О.: _____________________  Дата: __________");
