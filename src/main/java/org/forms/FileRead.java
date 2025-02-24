@@ -74,7 +74,6 @@ public class FileRead {
             String[] arr = value.split(", ");
             StringBuilder files = new StringBuilder();
 
-
             for (int i = 0; i < arr.length; i++) {
                 int beginIndex = arr[i].indexOf("baket%2F") + 8;
                 if (i == 0) {
@@ -92,11 +91,15 @@ public class FileRead {
             newValue = tempValue + ", " + value;
             mapAnswer.put(key, newValue);
         } else {
+
             if (key.contains(MachineData.DATE.getData())) {
                 mapAnswer.put(key, parsDate(value));
+            } else if (key.equals("Машина (другое)") && !value.isEmpty()) {
+                mapAnswer.put("Машина", value);
             } else {
                 mapAnswer.put(key, value);
             }
+
         }
     }
 

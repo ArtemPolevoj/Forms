@@ -22,7 +22,7 @@ public class FileWrite {
     public void writeFile() {
         Set<String> setMapAnswer = mapAnswer.keySet();
         try (XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(fileName))) {
-            sheet = workbook.getSheet("Таблица");
+            sheet = workbook.getSheet("Инспекции машин");
             if (!inspectionExist()) {
                 int lastRow = sheet.getLastRowNum();
                 XSSFRow rowNew = sheet.createRow(lastRow + 1);

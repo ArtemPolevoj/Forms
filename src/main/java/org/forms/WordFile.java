@@ -146,7 +146,7 @@ public class WordFile {
         cell2.getParagraphs().getFirst().setAlignment(ParagraphAlignment.CENTER);
 
         switch (secondText) {
-            case "ОК", "Ok", "ok", "Ок", "Да", "Норма", "Нет", "В норме" -> {
+            case "ОК", "Ok", "ok", "Ок", "Да", "Норма", "Нет", "В норме", "Нормальный", "нормальный" -> {
                 cell1.setColor("90EE90");
                 cell2.setColor("90EE90");
             }
@@ -226,7 +226,6 @@ public class WordFile {
             }
         }
     }
-
 
     private void setRecommendation() {
         XWPFParagraph paragraph = document.createParagraph();

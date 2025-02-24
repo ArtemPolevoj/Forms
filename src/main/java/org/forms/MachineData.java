@@ -5,7 +5,7 @@ public enum MachineData {
     AUTO("Машина"),
     SERIAL_NUMBER("Серийный номер"),
     HOUSE_NUMBER("Хозяйственный номер"),
-    FAULT ("Неисправность"),
+    FAULT("Неисправность"),
     DATE("Время создания");
     private final String data;
 
