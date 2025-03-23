@@ -14,8 +14,8 @@ public class OpenFile {
         fc.setAcceptAllFileFilterUsed(false);
         fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fc.addChoosableFileFilter(new FileNameExtensionFilter
-                ("Excel.xlsx", "xlsx"));
-        fc.setDialogTitle("Выберете файл для обработки.");
+                ("Json.json", "json"));
+        fc.setDialogTitle("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.");
         fc.showOpenDialog(null);
         selectedFile = fc.getSelectedFile();
     }

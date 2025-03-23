@@ -15,29 +15,30 @@ import java.util.*;
 import java.util.List;
 
 public class WordFile {
-    private final Map<String, String> mapAnswer;
     private final String folderName;
     private XWPFDocument document;
     private final String sizeCell1 = "70%";
     private final String sizeCell2 = "30%";
     private final int sizePage = 700;
-    private final List<String> listQuestion;
-    private final int countFirstRow = 9;
-    private final List<String> listFailure = new ArrayList<>();
+    private final Map<String, String> inputData = new LinkedHashMap<>();
+    private final Map<String, String> preData = new LinkedHashMap<>();
+    private final Map<String, String> resultData = new LinkedHashMap<>();
+    private final Map<String, String> defectData = new LinkedHashMap<>();
+
 
     public WordFile(Map<String, String> mapAnswer, String folderName) {
-        this.mapAnswer = mapAnswer;
+        setMaps(mapAnswer);
         this.folderName = folderName;
-        listQuestion = new ArrayList<>(mapAnswer.keySet());
+
     }
 
     public void createFile() {
-        String textFileName = mapAnswer.get(MachineData.AUTO.getData()) + " "
-                + mapAnswer.get(MachineData.SERIAL_NUMBER.getData()) + "_"
-                + mapAnswer.get(MachineData.HOUSE_NUMBER.getData()) +
+        String textFileName = inputData.get("РњР°С€РёРЅР°") + " "
+                + inputData.get("РЎРµСЂРёР№РЅС‹Р№ РЅРѕРјРµСЂ") + "_"
+                + inputData.get("РҐРѕР·СЏР№СЃС‚РІРµРЅРЅС‹Р№ РЅРѕРјРµСЂ") +
                 ".docx";
-        String fileName = folderName + "/Отчет " + textFileName;
-        String newFileName = folderName + "/Новый отчет " + textFileName;
+        String fileName = folderName + "/РћС‚С‡РµС‚ " + textFileName;
+        String newFileName = folderName + "/РћС‚С‡РµС‚ РЅРѕРІС‹Р№ " + textFileName;
 
         File file;
         file = new File(fileName);
@@ -55,25 +56,31 @@ public class WordFile {
             document.getDocument().getBody().addNewSectPr().addNewPgMar().setTop(BigInteger.valueOf(sizePage));
             document.getDocument().getBody().addNewSectPr().addNewPgMar().setBottom(BigInteger.valueOf(sizePage));
 
-            setHead("Данные инспекции");
-            setTableData();
+            setHead("Р”Р°РЅРЅС‹Рµ РёРЅСЃРїРµРєС†РёРё");
+            setInputDataTable();
 
-            setHead("Результат инспекции");
-            setTableAnswer();
+            setHead("РџСЂРµРґРІР°СЂРёС‚РµР»СЊРЅС‹Р№ РѕСЃРјРѕС‚СЂ");
+            setPreDataTable();
+
+            setHead("РќРµРёСЃРїСЂР°РІРЅРѕСЃС‚Рё");
+            setDefectDataTable();
+
+            setHead("Р‘РµР· Р·Р°РјРµС‡Р°РЅРёР№");
+            setResultDataTable();
+
+//            document.createParagraph().setPageBreak(true);
+//            setHead("????????????");
+//            setRecommendation();
+
+//            setHead("????????? ??????????? ??????");
+//            setTableConsequencesFailure();
+
+//            document.createParagraph().setPageBreak(true);
+//            setHead("???????????? ???????????");
+//            setCommercialOffer();
 
             document.createParagraph().setPageBreak(true);
-            setHead("Рекомендации");
-            setRecommendation();
-
-            setHead("Возможные последствия отказа");
-            setTableConsequencesFailure();
-
-            document.createParagraph().setPageBreak(true);
-            setHead("Коммерческое предложение");
-            setCommercialOffer();
-
-            document.createParagraph().setPageBreak(true);
-            setHead("Приложение 1");
+            setHead("РџСЂРёР»РѕР¶РµРЅРёРµ 1");
             setApposition();
 
             document.write(outputStream);
@@ -84,7 +91,6 @@ public class WordFile {
             }
 
         } catch (IOException e) {
-            System.out.println("Не удалось создать файл");
             throw new RuntimeException(e);
         }
 
@@ -115,12 +121,13 @@ public class WordFile {
         cell1.setColor(brown);
     }
 
-    private void setTableData() {
-        XWPFTable tableData = document.createTable(countFirstRow, 2);
+    private void setInputDataTable() {
+        int countRows = inputData.size();
+        XWPFTable tableData = document.createTable(countRows, 2);
         tableData.setWidth("100%");
         setTableBorders(tableData);
-
-        for (int i = 0; i < countFirstRow; i++) {
+        List<String> listQuestion = new ArrayList<>(inputData.keySet());
+        for (int i = 0; i < countRows; i++) {
             XWPFTableCell cell1 = tableData.getRow(i).getCell(0);
             XWPFTableCell cell2 = tableData.getRow(i).getCell(1);
             cell1.setWidth(sizeCell1);
@@ -128,11 +135,13 @@ public class WordFile {
             XWPFParagraph paragraph = cell2.getParagraphs().getFirst();
             paragraph.setAlignment(ParagraphAlignment.CENTER);
             paragraph.setVerticalAlignment(TextAlignment.CENTER);
-
             String question = listQuestion.get(i);
-            cell1.setText(question);
-            cell2.setText(mapAnswer.get(question));
-
+            if (question.contains("РћР±С‰РёР№ РІРёРґ РјР°С€РёРЅС‹")) {
+                setDataRow(tableData, listQuestion.get(i), inputData.get(listQuestion.get(i)), i);
+            } else {
+                cell1.setText(question);
+                cell2.setText(inputData.get(question));
+            }
         }
     }
 
@@ -144,26 +153,19 @@ public class WordFile {
         cell2.setWidth(sizeCell2);
         cell2.setText(secondText);
         cell2.getParagraphs().getFirst().setAlignment(ParagraphAlignment.CENTER);
-
-        switch (secondText) {
-            case "ОК", "Ok", "ok", "Ок", "Да", "Норма", "Нет", "В норме", "Нормальный", "нормальный" -> {
-                cell1.setColor("90EE90");
-                cell2.setColor("90EE90");
-            }
-            case "Нет осмотра" -> {
-                cell1.setColor("ADD8E6");
-                cell2.setColor("ADD8E6");
-            }
-            default -> {
-                if (firstText.contains("Общий вид")) {
-                    cell1.setColor("ADD8E6");
-                } else {
-                    cell1.setColor("FFDAB9");
-                    cell2.setColor("FFDAB9");
-                }
-            }
+        if (firstText.contains("РћР±С‰РёР№ РІРёРґ РјР°С€РёРЅС‹")) {
+            insertImage(cell1, cell2, secondText);
+        }else if (secondText.equals("РћРљ")) {
+            cell1.setColor("90EE90");
+            cell2.setColor("90EE90");
+        } else if (secondText.equals("РќРµС‚ РѕСЃРјРѕС‚СЂР°")) {
+            cell1.setColor("ADD8E6");
+            cell2.setColor("ADD8E6");
+        } else {
+            cell1.setColor("FFDAB9");
+            cell2.setColor("FFDAB9");
         }
-        if (secondText.contains(".jpeg")) {
+        if (secondText.contains(".jpeg") && !firstText.contains("РћР±С‰РёР№ РІРёРґ РјР°С€РёРЅС‹")) {
             insertImage(cell1, cell2, secondText);
         }
     }
@@ -184,7 +186,6 @@ public class WordFile {
         try {
             run.addPicture(new FileInputStream(logoFileName), XWPFDocument.PICTURE_TYPE_PNG, logoFileName, Units.toEMU(140), Units.toEMU(30));
         } catch (InvalidFormatException | IOException e) {
-            System.out.println("Не удалось вставить логотип");
             throw new RuntimeException(e);
         }
 
@@ -192,15 +193,14 @@ public class WordFile {
         paragraph = footer.createParagraph();
         paragraph.setAlignment(ParagraphAlignment.LEFT);
         run = paragraph.createRun();
-        run.setText("Дата: " + dateFormat.format(new Date()));
-        run.setText("                                     Технический специалист     ");
+        run.setText("Р”Р°С‚Р°: " + dateFormat.format(new Date()));
+        run.setText("                                     РўРµС…РЅРёС‡РµСЃРєРёР№ СЃРїРµС†РёР°Р»РёСЃС‚     ");
         try {
             run.addPicture(new FileInputStream(singFileName), XWPFDocument.PICTURE_TYPE_PNG, singFileName, Units.toEMU(30), Units.toEMU(30));
         } catch (InvalidFormatException | IOException e) {
-            System.out.println("Не удалось вставить подпись");
             throw new RuntimeException(e);
         }
-        run.setText("      Полевой А. В.");
+        run.setText("      РџРѕР»РµРІРѕР№ Рђ. Р’.");
     }
 
     private void insertImage(XWPFTableCell cell1, XWPFTableCell cell2, String text) {
@@ -221,98 +221,145 @@ public class WordFile {
                 run.addPicture(new FileInputStream(s), XWPFDocument.PICTURE_TYPE_JPEG, s,
                         Units.toEMU(width), Units.toEMU(height));
             } catch (InvalidFormatException | IOException e) {
-                System.out.println("Не удалось вставить фото: " + s);
+                System.out.println("File image " + s);
                 throw new RuntimeException(e);
             }
         }
     }
 
-    private void setRecommendation() {
-        XWPFParagraph paragraph = document.createParagraph();
-        XWPFRun run = paragraph.createRun();
-        for (String question : listQuestion) {
-            if (question.contains(MachineData.FAULT.getData())) {
-                String answer = mapAnswer.get(question);
-                listFailure.add(answer);
-                if (answer.contains("отсутствует")) {
-                    answer = answer.replace("отсутствует ", "");
-                    answer = answer.replace("Отсутствует ", "");
-                    run.setText("Установить " + answer + ".");
-                } else {
-                    run.setText("Устранить " + answer.toLowerCase() + ".");
-                }
-                run.addBreak();
-            }
+//    private void setRecommendation() {
+//        XWPFParagraph paragraph = document.createParagraph();
+//        XWPFRun run = paragraph.createRun();
+//        for (String question : listQuestion) {
+//            if (question.contains(MachineData.FAULT.getData())) {
+//                String answer = mapAnswer.get(question);
+//                listFailure.add(answer);
+//                if (answer.contains("???????????")) {
+//                    answer = answer.replace("??????????? ", "");
+//                    answer = answer.replace("??????????? ", "");
+//                    run.setText("?????????? " + answer + ".");
+//                } else {
+//                    run.setText("????????? " + answer.toLowerCase() + ".");
+//                }
+//                run.addBreak();
+//            }
+//        }
+//    }
+
+//    private void setTableConsequencesFailure() {
+//        document.createParagraph().createRun();
+//        int countRows = listFailure.size() + 1;
+//        XWPFTable tableConsequencesFailure = document.createTable(countRows, 2);
+//        tableConsequencesFailure.setWidth("100%");
+//        setTableBorders(tableConsequencesFailure);
+//        XWPFTableCell cell1 = tableConsequencesFailure.getRow(0).getCell(0);
+//        XWPFTableCell cell2 = tableConsequencesFailure.getRow(0).getCell(1);
+//        cell1.setWidth(sizeCell1);
+//        cell1.setText("????????? ??????????? ??????");
+//        cell1.setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+//        cell1.getParagraphs().getFirst().setAlignment(ParagraphAlignment.CENTER);
+//        cell2.setWidth(sizeCell2);
+//        cell2.setText("??????? ??????????? ?????? (?????????? 1)");
+//        int row = 1;
+//        for (String failure : listFailure) {
+//            tableConsequencesFailure.getRow(row++).getCell(0).setText(failure + " ????? ???????? ? ");
+//        }
+//    }
+
+    private void setResultDataTable() {
+        int countRows = resultData.size();
+        List<String> listQuestion = new ArrayList<>(resultData.keySet());
+        XWPFTable tableAnswer = document.createTable(countRows, 2);
+        for (int i = 0; i < countRows; i++) {
+            setDataRow(tableAnswer, listQuestion.get(i), resultData.get(listQuestion.get(i)), i);
         }
     }
 
-    private void setTableConsequencesFailure() {
-        document.createParagraph().createRun();
-        int countRows = listFailure.size() + 1;
-        XWPFTable tableConsequencesFailure = document.createTable(countRows, 2);
-        tableConsequencesFailure.setWidth("100%");
-        setTableBorders(tableConsequencesFailure);
-        XWPFTableCell cell1 = tableConsequencesFailure.getRow(0).getCell(0);
-        XWPFTableCell cell2 = tableConsequencesFailure.getRow(0).getCell(1);
-        cell1.setWidth(sizeCell1);
-        cell1.setText("Возможные последствия отказа");
-        cell1.setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
-        cell1.getParagraphs().getFirst().setAlignment(ParagraphAlignment.CENTER);
-        cell2.setWidth(sizeCell2);
-        cell2.setText("Уровень последствий отказа (приложение 1)");
-        int row = 1;
-        for (String failure : listFailure) {
-            tableConsequencesFailure.getRow(row++).getCell(0).setText(failure + " может привезти к ");
-        }
-    }
-
-    private void setTableAnswer() {
-        int countRows = listQuestion.size() - countFirstRow;
+    private void setPreDataTable() {
+        int countRows = preData.size();
+        List<String> listQuestion = new ArrayList<>(preData.keySet());
         XWPFTable tableAnswer = document.createTable(countRows, 2);
         int row = 0;
-        for (int i = countFirstRow; i < listQuestion.size(); i++) {
-            setDataRow(tableAnswer, listQuestion.get(i), mapAnswer.get(listQuestion.get(i)), row++);
+        for (int i = 0; i < countRows; i++) {
+            XWPFTableCell cell1 = tableAnswer.getRow(i).getCell(0);
+            XWPFTableCell cell2 = tableAnswer.getRow(i).getCell(1);
+            cell1.setWidth(sizeCell1);
+            cell2.setWidth(sizeCell2);
+            XWPFParagraph paragraph = cell2.getParagraphs().getFirst();
+            paragraph.setAlignment(ParagraphAlignment.CENTER);
+            paragraph.setVerticalAlignment(TextAlignment.CENTER);
+            String question = listQuestion.get(i);
+            cell1.setText(question);
+            cell2.setText(preData.get(question));
         }
     }
 
-    private void setCommercialOffer() {
-        XWPFParagraph pLeft = document.createParagraph();
-        pLeft.setAlignment(ParagraphAlignment.RIGHT);
-        XWPFRun rLeft = pLeft.createRun();
-        rLeft.setText("185013, г. Петрозаводск");
-        rLeft.addBreak();
-        rLeft.setText("пр. Лесной, 49Б");
-        rLeft.addBreak();
-        rLeft.setText("ИНН 1001262650");
-        rLeft.addBreak();
-        rLeft.setText("КПП 100101001");
-        rLeft.addBreak();
-        rLeft.setText("f.shestovec@mail.ru");
-        rLeft.addBreak();
-        rLeft.setText("+7 911 426 02 00");
-        rLeft.addBreak();
+    private void setDefectDataTable() {
+        int countRows = defectData.size();
+        List<String> listQuestion = new ArrayList<>(defectData.keySet());
+        int number;
+        int oldNumber;
+        for (int i = 0; i < countRows; i++) {
+            number = Integer.parseInt(listQuestion.get(i).substring(0, 3));
+            if (i == 0) {
+                XWPFTable tableAnswer = document.createTable(1, 2);
+                setDataRow(tableAnswer, listQuestion.get(i), defectData.get(listQuestion.get(i)), 0);
+            } else {
+                oldNumber = Integer.parseInt(listQuestion.get(i - 1).substring(0, 3));
+                if (number == oldNumber) {
+                    XWPFTable tableAnswer = document.createTable(1, 2);
+                    setDataRow(tableAnswer, listQuestion.get(i), defectData.get(listQuestion.get(i)), 0);
+                } else {
+                    document.createParagraph();
+                    XWPFRun run = document.createParagraph().createRun();
+                    run.setText("РЎРѕРіР»Р°СЃРѕРІР°РЅРѕ, РґРѕР»Р¶РЅРѕСЃС‚СЊ: __________________ Р¤.Р.Рћ.: _____________________ Р”Р°С‚Р°: __________");
+                    document.createParagraph();
+                }
+            }
 
-        XWPFRun run = document.createParagraph().createRun();
-        run.setText("Предлагаем вам профессиональную техническую инспекцию," +
-                " которая поможет выявить и устранить возможные проблемы и повысить безопасность и эффективность" +
-                " работы вашей техники.");
-        run.addBreak();
-        run.addBreak();
-        run.addBreak();
-//        run.setText("Предполагаемое время работы -    ч.ч.");
-//        run.addBreak();
-        run.setText("Цены и сроки поставки действительны 10 дней со дня подачи.");
-        run.addBreak();
-        run.setText("Согласовано, должность: __________________ Ф.И.О.: _____________________  Дата: __________");
-        run.addBreak();
-        run.setText("Мы уверены, что наша техническая инспекция поможет вам повысить безопасность и эффективность" +
-                " работы вашей техники, а также сэкономить время и деньги. ");
-        run.addBreak();
-        run.setText("Обращайтесь к нам и убедитесь в этом сами!");
-
-
+        }
+        document.createParagraph();
     }
 
+
+//    private void setCommercialOffer() {
+//        XWPFParagraph pLeft = document.createParagraph();
+//        pLeft.setAlignment(ParagraphAlignment.RIGHT);
+//        XWPFRun rLeft = pLeft.createRun();
+//        rLeft.setText("185013, ?. ????????????");
+//        rLeft.addBreak();
+//        rLeft.setText("??. ??????, 49?");
+//        rLeft.addBreak();
+//        rLeft.setText("??? 1001262650");
+//        rLeft.addBreak();
+//        rLeft.setText("??? 100101001");
+//        rLeft.addBreak();
+//        rLeft.setText("f.shestovec@mail.ru");
+//        rLeft.addBreak();
+//        rLeft.setText("+7 911 426 02 00");
+//        rLeft.addBreak();
+//
+//        XWPFRun run = document.createParagraph().createRun();
+//        run.setText("?????????? ??? ???????????????? ??????????? ?????????," +
+//                " ??????? ??????? ??????? ? ????????? ????????? ???????? ? ???????? ???????????? ? ?????????????" +
+//                " ?????? ????? ???????.");
+//        run.addBreak();
+//        run.addBreak();
+//        run.addBreak();
+
+    /// /        run.setText("?????????????? ????? ?????? -    ?.?.");
+    /// /        run.addBreak();
+//        run.setText("???? ? ????? ???????? ????????????? 10 ???? ?? ??? ??????.");
+//        run.addBreak();
+//        run.setText("???????????, ?????????: __________________ ?.?.?.: _____________________  ????: __________");
+//        run.addBreak();
+//        run.setText("?? ???????, ??? ???? ??????????? ????????? ??????? ??? ???????? ???????????? ? ?????????????" +
+//                " ?????? ????? ???????, ? ????? ?????????? ????? ? ??????. ");
+//        run.addBreak();
+//        run.setText("??????????? ? ??? ? ????????? ? ???? ????!");
+//
+//
+//    }
     private void setApposition() {
         XWPFRun run = document.createParagraph().createRun();
         run.addBreak();
@@ -320,7 +367,31 @@ public class WordFile {
             run.addPicture(new FileInputStream("rating.png"), XWPFDocument.PICTURE_TYPE_JPEG,
                     "rating.png", Units.toEMU(sizePage / 1.3), Units.toEMU(sizePage / 1.9));
         } catch (InvalidFormatException | IOException e) {
-            System.out.println("Не удалось вставить таблицу рейтенгов");
+            throw new RuntimeException(e);
         }
     }
+
+    private void setMaps(Map<String, String> mapAnswer) {
+        for (String key : mapAnswer.keySet()) {
+            String value = mapAnswer.get(key);
+            try {
+                int number = Integer.parseInt(key.substring(0, 1));
+                if (number == 1) {
+                    preData.put(key, value);
+                } else {
+                    if (key.contains("РќРµРёСЃРїСЂР°РІРЅРѕСЃС‚СЊ")
+                            || key.contains("РЎРїРёСЃРѕРє РЅРµРѕР±С…РѕРґРёРјС‹С… Р·.С‡.")
+                            || key.contains("Р¤РѕС‚Рѕ РЅРµРёСЃРїСЂР°РІРЅРѕСЃС‚Рё")
+                            || value.contains("Р•СЃС‚СЊ Р·Р°РјРµС‡Р°РЅРёСЏ")) {
+                        defectData.put(key, value);
+                    } else {
+                        resultData.put(key, value);
+                    }
+                }
+            } catch (Exception e) {
+                inputData.put(key, value);
+            }
+        }
+    }
+
 }

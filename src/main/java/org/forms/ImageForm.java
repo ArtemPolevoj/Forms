@@ -28,8 +28,8 @@ public class ImageForm {
         String[] arrImage;
         String url = "https://storage.yandexcloud.net/art-forms-baket/";
         for (String key : mapAnswer.keySet()) {
-            if (key.contains("Фото") || key.equals("Общий вид машины")) {
-                if (key.contains("Фото")) {
+            if (key.contains("Р¤РѕС‚Рѕ") || key.equals("РћР±С‰РёР№ РІРёРґ РјР°С€РёРЅС‹")) {
+                if (key.contains("Р¤РѕС‚Рѕ")) {
                     number = key.substring(0, 3);
                 } else {
                     number = "O";
@@ -58,7 +58,7 @@ public class ImageForm {
                             mapAnswer.put(key, value.toString());
 
                         } catch (Exception e) {
-                            System.out.println("Не удалось обработать " + name);
+                          //  System.out.println("РќРµ СѓРґР°Р»РѕСЃСЊ РІСЃС‚Р°РІРёС‚СЊ " + name);
                             throw new RuntimeException(e);
                         }
                     } else {

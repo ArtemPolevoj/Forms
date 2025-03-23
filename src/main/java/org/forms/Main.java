@@ -5,17 +5,21 @@ import java.util.Map;
 public class Main {
     public static void main(String[] args) {
         String fileNameExcel = new OpenFile().getSelectedFile().getPath();
-       // String fileNameExcel = "C:/Users/user/Downloads/2024-09-23 Vizual'nyi osmotr bul'dozera ChETRA 1.2.xlsx";
-        String mainFolder = "C:/Users/user/Desktop/Test";
-     //   String mainFolder =  "C:/Users/user/YandexDisk-techr.22/Тех. отдел/1. Документация для сервиса/5 Инспекции";
-        String nameFileWrite = "C:/Users/user/Desktop/Инспекции ТР v1.2.xlsx";
+//       // String fileNameExcel = "C:/Users/user/Downloads/2024-09-23 Vizual'nyi osmotr bul'dozera ChETRA 1.2.xlsx";
+        String mainFolder = "C:/Users/artem/Desktop/Test";
+//     //   String mainFolder =  "C:/Users/user/YandexDisk-techr.22/???. ?????/1. ???????????? ??? ???????/5 ?????????";
+//        String nameFileWrite = "C:/Users/user/Desktop/????????? ?? v1.2.xlsx";
         FileRead fileRead = new FileRead(fileNameExcel);
         Map<String, String> mapAnswer = fileRead.getMapAnswer();
+      //  mapAnswer.forEach((key, value) -> System.out.println(key + " - " + value));
+//        System.out.println(mapAnswer.get("РњР°С€РёРЅР°"));
+//        System.out.println(mapAnswer.get("Р”Р°С‚Р° РѕСЃРјРѕС‚СЂР°"));
+//        System.out.println(mapAnswer.get("РЎРµСЂРёР№РЅС‹Р№ РЅРѕРјРµСЂ") + "_" + mapAnswer.get("РҐРѕР·СЏР№СЃС‚РІРµРЅРЅС‹Р№ РЅРѕРјРµСЂ"));
+//        System.out.println();
         Folder folder = new Folder(mapAnswer , mainFolder);
-        FileWrite fileWrite = new FileWrite(nameFileWrite, mapAnswer);
-        fileWrite.writeFile();
+//        FileWrite fileWrite = new FileWrite(nameFileWrite, mapAnswer);
+//        fileWrite.writeFile();
         ImageForm imageForm = new ImageForm(mapAnswer , folder.getDirDate());
-        imageForm.setImageAnswer();
         mapAnswer = imageForm.getMapAnswer();
         WordFile wordFile = new WordFile(mapAnswer , folder.getDirAutoNumber());
         wordFile.createFile();

@@ -1,10 +1,14 @@
 package org.forms;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.ParseException;
@@ -13,7 +17,6 @@ import java.util.*;
 
 public class FileRead {
     private final String fileName;
-    private Sheet sheet;
     private final Map<String, String> mapAnswer = new LinkedHashMap<>();
 
     public FileRead(String fileName) {
@@ -26,17 +29,43 @@ public class FileRead {
     }
 
     private void setMapAnswer() {
-        try (XSSFWorkbook workbook = new XSSFWorkbook(
-                new FileInputStream(fileName))) {
+        File file = new File(fileName);
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            JsonNode rootNode = mapper.readTree(file);
+            String jsonString = rootNode.toString();
+            List<List<String[]>> data = mapper.readValue(jsonString, new TypeReference<>() {
+            });
 
-            sheet = workbook.getSheet("Sheet");
-            for (Row row : sheet) {
-                Iterator<Cell> cellIterator = row.cellIterator();
-                while (cellIterator.hasNext()) {
-                    Cell cell = cellIterator.next();
-                    if (!getTextTempCell(cell).isEmpty()) {
-                        setAnswer(cell);
+            for (String[] entry : data.getFirst()) {
+                if (!entry[1].isEmpty()) {
+                    String key = entry[0].trim().replace("## ", "");
+                    String value = entry[1].trim().replace("## ", "");
+                    if (key.contains("Машина (другое)")) {
+                        key = "Машина";
                     }
+                    if (key.contains("[")) {
+                        key = key.substring(0, key.length() - 4);
+                    }
+                    if (value.contains("http")) {
+                        String[] arr = value.split(", ");
+                        StringBuilder files = new StringBuilder();
+
+                        for (int i = 0; i < arr.length; i++) {
+                            int beginIndex = arr[i].indexOf("baket%2F") + 8;
+                            if (i == 0) {
+                                files.append(arr[i].substring(beginIndex));
+                            } else {
+                                files.append(", ").append(arr[i].substring(beginIndex));
+                            }
+                        }
+                        value = String.valueOf(files);
+                    }
+                    if (key.contains("Время создания")){
+                        key = "Дата осмотра";
+                        value = parsDate(value);
+                    }
+                    mapAnswer.put(key, value);
                 }
             }
         } catch (IOException e) {
@@ -44,68 +73,9 @@ public class FileRead {
         }
     }
 
-    private String getTextTempCell(Cell cell) {
-        int colGet = cell.getColumnIndex();
-        int rowGet = cell.getRowIndex();
-        try {
-            return sheet.getRow(rowGet + 1).getCell(colGet).getStringCellValue();
-        } catch (NullPointerException e) {
-            return "";
-        }
-    }
-
-    private void setAnswer(Cell cell) {
-        String temp = cell.toString();
-        String key;
-        String newValue;
-        if (temp.contains("[")) {
-            key = temp.substring(3, temp.length() - 4);
-
-        } else if (temp.contains("#")) {
-            key = temp.substring(3);
-        } else {
-            key = temp;
-        }
-        String value = getTextTempCell(cell);
-        if (value.contains("#")) {
-            value = value.substring(3);
-        }
-        if (value.contains("http")) {
-            String[] arr = value.split(", ");
-            StringBuilder files = new StringBuilder();
-
-            for (int i = 0; i < arr.length; i++) {
-                int beginIndex = arr[i].indexOf("baket%2F") + 8;
-                if (i == 0) {
-                    files.append(arr[i].substring(beginIndex));
-                } else {
-                    files.append(", ")
-                            .append(arr[i].substring(beginIndex));
-                }
-            }
-            value = String.valueOf(files);
-        }
-
-        if (mapAnswer.containsKey(key)) {
-            String tempValue = mapAnswer.get(key);
-            newValue = tempValue + ", " + value;
-            mapAnswer.put(key, newValue);
-        } else {
-
-            if (key.contains(MachineData.DATE.getData())) {
-                mapAnswer.put(key, parsDate(value));
-            } else if (key.equals("������ (������)") && !value.isEmpty()) {
-                mapAnswer.put("������", value);
-            } else {
-                mapAnswer.put(key, value);
-            }
-
-        }
-    }
-
     private String parsDate(String inputDate) {
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat outputFormat = new SimpleDateFormat("dd.MM.yyyy");
         Date date;
         try {
             date = inputFormat.parse(inputDate);

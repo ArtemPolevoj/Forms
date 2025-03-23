@@ -22,10 +22,10 @@ public class Folder {
     }
 
     private void setDirectory() {
-        String folderAuto = folder + "/" + mapAnswer.get(MachineData.AUTO.getData());
-        folderAutoNumber = folderAuto + "/" + mapAnswer.get(MachineData.AUTO.getData()) + " "
-                + mapAnswer.get(MachineData.SERIAL_NUMBER.getData()) + "_" + mapAnswer.get(MachineData.HOUSE_NUMBER.getData());
-        folderDate = folderAutoNumber + "/" + parsDate(mapAnswer.get(MachineData.DATE.getData()));
+        String folderAuto = folder + "/" + mapAnswer.get("Машина");
+        folderAutoNumber = folderAuto + "/" + mapAnswer.get("Дата осмотра") + " "
+                + mapAnswer.get("Серийный номер") + "_" + mapAnswer.get("Хозяйственный номер");
+        folderDate = folderAutoNumber + "/" + mapAnswer.get("Дата осмотра");
 
         File dirAuto = new File(folderAuto);
         if (!dirAuto.exists()) {
@@ -61,15 +61,4 @@ public class Folder {
         return folderDate;
     }
 
-    private String parsDate(String inputDate) {
-        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat outputFormat = new SimpleDateFormat("dd.MM.yyyy");
-        Date date;
-        try {
-            date = inputFormat.parse(inputDate);
-            return outputFormat.format(date);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

@@ -5,20 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="146d86cf-d5c8-4405-bf02-a12b5e4d34a0" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dbnavigator.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradlew.bat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/settings.gradle.kts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/forms/Main.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/forms/ReaderFile.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/forms/FileRead.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/forms/FileRead.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/forms/FileWrite.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/forms/FileWrite.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/forms/Folder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/forms/Folder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/forms/ImageForm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/forms/ImageForm.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/forms/MachineData.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/forms/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/forms/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/forms/OpenFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/forms/OpenFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/forms/Report.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/forms/WordFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/forms/WordFile.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,8 +55,25 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "ArtemPolevoj"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/ArtemPolevoj/Forms.git",
+    "accountId": "d22bee71-08b1-4871-9dba-3af556d744c3"
+  }
+}]]></component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -73,9 +90,9 @@
   <component name="MavenRunner">
     <option name="jreName" value="#JAVA_HOME" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 4
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
   <component name="ProjectId" id="2gKVhYx5Ah8MPk32RKZP1NN18H0" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
@@ -86,10 +103,17 @@
   "keyToString": {
     "Application.Main.executor": "Run",
     "Gradle.Forms [:Main.main()].executor": "Run",
+    "Gradle.Upgrade Gradle wrapper.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "json",
+    "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/artem/Documents/IntelliJ_IDEA/JsonTest",
+    "last_opened_file_path": "C:/Gradle/gradle-8.13",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
     "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle"
   }
 }]]></component>
@@ -123,5 +147,16 @@
       <updated>1715446378920</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
