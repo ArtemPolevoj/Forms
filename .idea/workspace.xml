@@ -4,8 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="146d86cf-d5c8-4405-bf02-a12b5e4d34a0" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/forms/OpenFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/forms/OpenFile.java" afterDir="false" />
+    <list default="true" id="146d86cf-d5c8-4405-bf02-a12b5e4d34a0" name="Changes" comment="work data">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/forms/FileWrite.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/forms/FileWrite.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/forms/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/forms/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/forms/WordFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/forms/WordFile.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -133,6 +136,15 @@
       <option name="presentableId" value="Default" />
       <updated>1715446378920</updated>
     </task>
+    <task id="LOCAL-00001" summary="work data">
+      <option name="closed" value="true" />
+      <created>1742802471714</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1742802471714</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -145,5 +157,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="work data" />
+    <option name="LAST_COMMIT_MESSAGE" value="work data" />
   </component>
 </project>

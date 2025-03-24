@@ -137,6 +137,7 @@ public class WordFile {
             paragraph.setVerticalAlignment(TextAlignment.CENTER);
             String question = listQuestion.get(i);
             if (question.contains("Общий вид машины")) {
+                cell1.setText(question);
                 insertImage(cell1, cell2, inputData.get(question));
             } else {
                 cell1.setText(question);
@@ -308,15 +309,12 @@ public class WordFile {
                     XWPFTable tableAnswer = document.createTable(1, 2);
                     setDataRow(tableAnswer, listQuestion.get(i), defectData.get(listQuestion.get(i)), 0);
                 } else {
-                    document.createParagraph();
-                    XWPFRun run = document.createParagraph().createRun();
-                    run.setText("Согласовано, должность: __________________ Ф.И.О.: _____________________ Дата: __________");
-                    document.createParagraph();
+                    setOffer();
                 }
             }
 
         }
-        document.createParagraph();
+        setOffer();
     }
 
 
@@ -392,4 +390,16 @@ public class WordFile {
         }
     }
 
+    private void setOffer(){
+        XWPFTable tableData = document.createTable(1, 2);
+        XWPFTableCell cell1 = tableData.getRow(0).getCell(0);
+        XWPFTableCell cell2 = tableData.getRow(0).getCell(1);
+        cell1.setWidth(sizeCell1);
+        cell2.setWidth(sizeCell2);
+        cell1.setText("Рекомендации");
+        document.createParagraph();
+        XWPFRun run = document.createParagraph().createRun();
+        run.setText("Согласовано, должность: __________________ Ф.И.О.: _____________________ Дата: __________");
+        document.createParagraph();
+    }
 }
