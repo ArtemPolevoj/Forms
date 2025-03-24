@@ -17,8 +17,8 @@ import java.util.List;
 public class WordFile {
     private final String folderName;
     private XWPFDocument document;
-    private final String sizeCell1 = "70%";
-    private final String sizeCell2 = "30%";
+    private final String sizeCell1 = "60%";
+    private final String sizeCell2 = "40%";
     private final int sizePage = 700;
     private final Map<String, String> inputData = new LinkedHashMap<>();
     private final Map<String, String> preData = new LinkedHashMap<>();
@@ -298,6 +298,8 @@ public class WordFile {
         List<String> listQuestion = new ArrayList<>(defectData.keySet());
         int number;
         int oldNumber;
+        String recommendation = "";
+        String defect = "";
         for (int i = 0; i < countRows; i++) {
             number = Integer.parseInt(listQuestion.get(i).substring(0, 3));
             if (i == 0) {
@@ -306,15 +308,20 @@ public class WordFile {
             } else {
                 oldNumber = Integer.parseInt(listQuestion.get(i - 1).substring(0, 3));
                 if (number == oldNumber) {
+                    if (listQuestion.get(i).contains("Неисправность")){
+                        defect = defectData.get(listQuestion.get(i));
+                    }
+                    if (listQuestion.get(i).contains("Список необходимых з.ч.")){
+                        recommendation = defectData.get(listQuestion.get(i));
+                    }
                     XWPFTable tableAnswer = document.createTable(1, 2);
                     setDataRow(tableAnswer, listQuestion.get(i), defectData.get(listQuestion.get(i)), 0);
                 } else {
-                    setOffer();
+                    setOffer(defect, recommendation);
                 }
             }
-
         }
-        setOffer();
+        setOffer(defect, recommendation);
     }
 
 
@@ -390,13 +397,29 @@ public class WordFile {
         }
     }
 
-    private void setOffer(){
-        XWPFTable tableData = document.createTable(1, 2);
+    private void setOffer(String defect, String recommendation){
+        XWPFTable tableData = document.createTable(3, 2);
         XWPFTableCell cell1 = tableData.getRow(0).getCell(0);
         XWPFTableCell cell2 = tableData.getRow(0).getCell(1);
         cell1.setWidth(sizeCell1);
         cell2.setWidth(sizeCell2);
         cell1.setText("Рекомендации");
+        cell2.setText(recommendation);
+        XWPFTableCell cell3 = tableData.getRow(1).getCell(0);
+        XWPFTableCell cell4 = tableData.getRow(1).getCell(1);
+        XWPFTableCell cell5 = tableData.getRow(2).getCell(0);
+        cell3.setWidth(sizeCell1);
+        cell4.setWidth(sizeCell2);
+        XWPFParagraph paragraph = cell3.getParagraphs().getFirst();
+        paragraph.setVerticalAlignment(TextAlignment.CENTER);
+        paragraph.setAlignment(ParagraphAlignment.CENTER);
+        XWPFParagraph paragraph1 = cell4.getParagraphs().getFirst();
+        paragraph1.setVerticalAlignment(TextAlignment.CENTER);
+        paragraph1.setAlignment(ParagraphAlignment.CENTER);
+        cell3.setText("Возможные последствия отказа");
+        cell4.setText("Уровень последствий отказа (приложение 1)");
+        cell5.setText(defect + " может привезти к ");
+        document.createParagraph();
         document.createParagraph();
         XWPFRun run = document.createParagraph().createRun();
         run.setText("Согласовано, должность: __________________ Ф.И.О.: _____________________ Дата: __________");

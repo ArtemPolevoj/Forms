@@ -50,7 +50,6 @@ public class FileRead {
                     if (value.contains("http")) {
                         String[] arr = value.split(", ");
                         StringBuilder files = new StringBuilder();
-
                         for (int i = 0; i < arr.length; i++) {
                             int beginIndex = arr[i].indexOf("baket%2F") + 8;
                             if (i == 0) {
@@ -61,11 +60,17 @@ public class FileRead {
                         }
                         value = String.valueOf(files);
                     }
-                    if (key.contains("Время создания")){
+                    if (key.contains("Время создания")) {
                         key = "Дата осмотра";
                         value = parsDate(value);
                     }
-                    mapAnswer.put(key, value);
+                    if (mapAnswer.containsKey(key)) {
+                        value = mapAnswer.get(key) + ", " + value;
+                        mapAnswer.put(key, value);
+                    } else {
+                        mapAnswer.put(key, value);
+                    }
+
                 }
             }
         } catch (IOException e) {
