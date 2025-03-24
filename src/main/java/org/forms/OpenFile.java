@@ -15,7 +15,7 @@ public class OpenFile {
         fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fc.addChoosableFileFilter(new FileNameExtensionFilter
                 ("Json.json", "json"));
-        fc.setDialogTitle("�������� ���� ��� ���������.");
+        fc.setDialogTitle("Выберете файл из списка.");
         fc.showOpenDialog(null);
         selectedFile = fc.getSelectedFile();
     }

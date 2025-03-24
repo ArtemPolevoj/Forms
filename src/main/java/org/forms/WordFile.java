@@ -137,7 +137,7 @@ public class WordFile {
             paragraph.setVerticalAlignment(TextAlignment.CENTER);
             String question = listQuestion.get(i);
             if (question.contains("Общий вид машины")) {
-                setDataRow(tableData, listQuestion.get(i), inputData.get(listQuestion.get(i)), i);
+                insertImage(cell1, cell2, inputData.get(question));
             } else {
                 cell1.setText(question);
                 cell2.setText(inputData.get(question));
@@ -153,9 +153,7 @@ public class WordFile {
         cell2.setWidth(sizeCell2);
         cell2.setText(secondText);
         cell2.getParagraphs().getFirst().setAlignment(ParagraphAlignment.CENTER);
-        if (firstText.contains("Общий вид машины")) {
-            insertImage(cell1, cell2, secondText);
-        }else if (secondText.equals("ОК")) {
+        if (secondText.equals("ОК")) {
             cell1.setColor("90EE90");
             cell2.setColor("90EE90");
         } else if (secondText.equals("Нет осмотра")) {
@@ -165,7 +163,7 @@ public class WordFile {
             cell1.setColor("FFDAB9");
             cell2.setColor("FFDAB9");
         }
-        if (secondText.contains(".jpeg") && !firstText.contains("Общий вид машины")) {
+        if (secondText.contains(".jpeg")) {
             insertImage(cell1, cell2, secondText);
         }
     }
