@@ -155,7 +155,7 @@ public class WordFile {
         if (secondText.contains(".jpeg")) {
             insertImage(cell1, cell2, secondText);
         }
-        if (secondText.contains("Есть замечания")){
+        if (secondText.contains("Есть замечания")) {
             cell1.getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.RESTART);
             cell2.getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.CONTINUE);
             XWPFParagraph paragraph = cell1.getParagraphs().getFirst();
@@ -262,10 +262,10 @@ public class WordFile {
             } else {
                 oldNumber = Integer.parseInt(listQuestion.get(i - 1).substring(0, 3));
                 if (number == oldNumber) {
-                    if (listQuestion.get(i).contains("Неисправность")){
+                    if (listQuestion.get(i).contains("Неисправность")) {
                         defect = defectData.get(listQuestion.get(i));
                     }
-                    if (listQuestion.get(i).contains("Список необходимых з.ч.")){
+                    if (listQuestion.get(i).contains("Список необходимых з.ч.")) {
                         recommendation = defectData.get(listQuestion.get(i));
                     }
                     XWPFTable tableAnswer = document.createTable(1, 2);
@@ -307,12 +307,16 @@ public class WordFile {
                     }
                 }
             } catch (Exception e) {
-                inputData.put(key, value);
+                if (key.contains("Пожелания, предложения")) {
+                    preData.put(key, value);
+                } else {
+                    inputData.put(key, value);
+                }
             }
         }
     }
 
-    private void setOffer(String defect, String recommendation){
+    private void setOffer(String defect, String recommendation) {
         XWPFTable tableData = document.createTable(3, 2);
         XWPFTableCell cell1 = tableData.getRow(0).getCell(0);
         XWPFTableCell cell2 = tableData.getRow(0).getCell(1);
@@ -336,8 +340,11 @@ public class WordFile {
         cell4.setText("Уровень последствий отказа (приложение 1)");
         cell5.setText(defect + " может привезти к ");
         document.createParagraph();
-        document.createParagraph();
         XWPFRun run = document.createParagraph().createRun();
+        run.setText("Коммерческое предложение:");
+        run.addBreak();
+        run.setText("");
+        run.addBreak();
         run.setText("Согласовано, должность: __________________ Ф.И.О.: _____________________ Дата: __________");
         document.createParagraph();
     }
