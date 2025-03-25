@@ -155,6 +155,12 @@ public class WordFile {
         if (secondText.contains(".jpeg")) {
             insertImage(cell1, cell2, secondText);
         }
+        if (secondText.contains("Есть замечания")){
+            cell1.getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.RESTART);
+            cell2.getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.CONTINUE);
+            XWPFParagraph paragraph = cell1.getParagraphs().getFirst();
+            paragraph.setAlignment(ParagraphAlignment.CENTER);
+        }
     }
 
     private void setHeaderFooter() {

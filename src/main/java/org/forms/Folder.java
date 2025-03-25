@@ -23,7 +23,7 @@ public class Folder {
 
     private void setDirectory() {
         String folderAuto = folder + "/" + mapAnswer.get("Машина");
-        folderAutoNumber = folderAuto + "/" + mapAnswer.get("Дата осмотра") + " "
+        folderAutoNumber = folderAuto + "/" + mapAnswer.get("Машина") + " "
                 + mapAnswer.get("Серийный номер") + "_" + mapAnswer.get("Хозяйственный номер");
         folderDate = folderAutoNumber + "/" + mapAnswer.get("Дата осмотра");
 
