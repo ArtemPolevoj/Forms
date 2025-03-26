@@ -18,7 +18,7 @@ public class WordFile {
     private XWPFDocument document;
     private final String sizeCell1 = "60%";
     private final String sizeCell2 = "40%";
-    private final int sizePage = 700;
+    private final int sizePage = 1250;
     private final Map<String, String> inputData = new LinkedHashMap<>();
     private final Map<String, String> preData = new LinkedHashMap<>();
     private final Map<String, String> resultData = new LinkedHashMap<>();
@@ -242,8 +242,13 @@ public class WordFile {
             paragraph.setAlignment(ParagraphAlignment.CENTER);
             paragraph.setVerticalAlignment(TextAlignment.CENTER);
             String question = listQuestion.get(i);
-            cell1.setText(question);
-            cell2.setText(preData.get(question));
+            if (question.contains("фото")){
+                cell1.setText(question);
+                insertImage(cell1, cell2, preData.get(question));
+            }else {
+                cell1.setText(question);
+                cell2.setText(preData.get(question));
+            }
         }
     }
 
@@ -272,6 +277,8 @@ public class WordFile {
                     setDataRow(tableAnswer, listQuestion.get(i), defectData.get(listQuestion.get(i)), 0);
                 } else {
                     setOffer(defect, recommendation);
+                    XWPFTable tableAnswer = document.createTable(1, 2);
+                    setDataRow(tableAnswer, listQuestion.get(i), defectData.get(listQuestion.get(i)), 0);
                 }
             }
         }
@@ -307,7 +314,7 @@ public class WordFile {
                     }
                 }
             } catch (Exception e) {
-                if (key.contains("Пожелания, предложения")) {
+                if (key.contains("предложения")) {
                     preData.put(key, value);
                 } else {
                     inputData.put(key, value);
