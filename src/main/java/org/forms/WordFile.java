@@ -16,9 +16,9 @@ import java.util.List;
 public class WordFile {
     private final String folderName;
     private XWPFDocument document;
+    private int sizePage = 700;
     private final String sizeCell1 = "60%";
     private final String sizeCell2 = "40%";
-    private final int sizePage = 1250;
     private final Map<String, String> inputData = new LinkedHashMap<>();
     private final Map<String, String> preData = new LinkedHashMap<>();
     private final Map<String, String> resultData = new LinkedHashMap<>();
@@ -205,10 +205,19 @@ public class WordFile {
         paragraph.setAlignment(ParagraphAlignment.LEFT);
         XWPFRun run = paragraph.createRun();
         run.addBreak();
-
         String[] fileName = text.split(", ");
-        int width = (int) ((sizePage / 1.3) / fileName.length);
-        int height = (int) ((sizePage / 1.8) / fileName.length);
+        // настройка размера изображения
+        int sizeImage;
+        if (fileName.length == 1 ||fileName.length == 2) {
+            sizeImage = sizePage;
+        } else if (fileName.length < 5) {
+            sizeImage = 1000;
+        } else {
+            sizeImage = 1150;
+        }
+
+        int width = (int) ((sizeImage / 1.3) / fileName.length);
+        int height = (int) ((sizeImage / 1.8) / fileName.length);
         for (String s : fileName) {
             try {
                 run.addPicture(new FileInputStream(s), XWPFDocument.PICTURE_TYPE_JPEG, s,
@@ -242,14 +251,15 @@ public class WordFile {
             paragraph.setAlignment(ParagraphAlignment.CENTER);
             paragraph.setVerticalAlignment(TextAlignment.CENTER);
             String question = listQuestion.get(i);
-            if (question.contains("фото")){
+            if (question.contains("фото")) {
                 cell1.setText(question);
                 insertImage(cell1, cell2, preData.get(question));
-            }else {
+            } else {
                 cell1.setText(question);
                 cell2.setText(preData.get(question));
             }
         }
+        setOffer(null, null);
     }
 
     private void setDefectDataTable() {
@@ -345,14 +355,14 @@ public class WordFile {
         cell3.setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
         cell3.setText("Возможные последствия отказа");
         cell4.setText("Уровень последствий отказа (приложение 1)");
+        cell3.setColor("FFFF00");
+        cell4.setColor("FFFF00");
         cell5.setText(defect + " может привезти к ");
         document.createParagraph();
         XWPFRun run = document.createParagraph().createRun();
         run.setText("Коммерческое предложение:");
         run.addBreak();
-        run.setText("");
         run.addBreak();
         run.setText("Согласовано, должность: __________________ Ф.И.О.: _____________________ Дата: __________");
-        document.createParagraph();
     }
 }
