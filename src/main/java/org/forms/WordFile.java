@@ -16,7 +16,7 @@ import java.util.List;
 public class WordFile {
     private final String folderName;
     private XWPFDocument document;
-    private int sizePage = 700;
+    private final int sizePage = 700;
     private final String sizeCell1 = "60%";
     private final String sizeCell2 = "40%";
     private final Map<String, String> inputData = new LinkedHashMap<>();
@@ -208,14 +208,11 @@ public class WordFile {
         String[] fileName = text.split(", ");
         // настройка размера изображения
         int sizeImage;
-        if (fileName.length == 1 ||fileName.length == 2) {
-            sizeImage = sizePage;
-        } else if (fileName.length < 5) {
-            sizeImage = 1000;
-        } else {
-            sizeImage = 1150;
+        switch (fileName.length) {
+            case 1, 2, 3 -> sizeImage = sizePage;
+            case 4 -> sizeImage = 1400;
+            default -> sizeImage = 1170;
         }
-
         int width = (int) ((sizeImage / 1.3) / fileName.length);
         int height = (int) ((sizeImage / 1.8) / fileName.length);
         for (String s : fileName) {
