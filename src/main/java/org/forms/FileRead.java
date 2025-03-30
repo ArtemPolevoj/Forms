@@ -3,13 +3,7 @@ package org.forms;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -64,7 +58,7 @@ public class FileRead {
                         key = "Дата осмотра";
                         value = parsDate(value);
                     }
-                    if (mapAnswer.containsKey(key)) {
+                    if (mapAnswer.containsKey(key) && !key.equals("Машина")) {
                         value = mapAnswer.get(key) + ", " + value;
                         mapAnswer.put(key, value);
                     } else {
