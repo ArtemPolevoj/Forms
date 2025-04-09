@@ -167,6 +167,10 @@ public class WordFile {
 
         String logoFileName = "logo.png";
         String singFileName = "sing.png";
+        String id = "ID " + inputData.get("ID");
+        String machine = inputData.get("Машина") + "\t "
+                + inputData.get("Серийный номер") + "_"
+                + inputData.get("Хозяйственный номер");
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
         CTSectPr sectPr = document.getDocument().getBody().addNewSectPr();
@@ -181,19 +185,20 @@ public class WordFile {
         } catch (InvalidFormatException | IOException e) {
             throw new RuntimeException(e);
         }
+        run.setText("\t\t\t" + id + "\t\t\t " + machine);
 
         XWPFFooter footer = headerFooterPolicy.createFooter(XWPFHeaderFooterPolicy.DEFAULT);
         paragraph = footer.createParagraph();
         paragraph.setAlignment(ParagraphAlignment.LEFT);
         run = paragraph.createRun();
         run.setText("Дата: " + dateFormat.format(new Date()));
-        run.setText("                                     Технический специалист     ");
+        run.setText("\t\t\tТехнический специалист\t\t");
         try {
             run.addPicture(new FileInputStream(singFileName), XWPFDocument.PICTURE_TYPE_PNG, singFileName, Units.toEMU(30), Units.toEMU(30));
         } catch (InvalidFormatException | IOException e) {
             throw new RuntimeException(e);
         }
-        run.setText("      Полевой А. В.");
+        run.setText("\t\tПолевой А. В.");
     }
 
     private void insertImage(XWPFTableCell cell1, XWPFTableCell cell2, String text) {
