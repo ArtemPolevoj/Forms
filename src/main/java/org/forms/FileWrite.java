@@ -33,11 +33,7 @@ public class FileWrite {
                     String celValue = cell.getStringCellValue();
                     if (setMapAnswer.contains(celValue)) {
                         XSSFCell cellNew = rowNew.createCell(cell.getColumnIndex());
-                      //  if (celValue.contains("�����")) {
-                      //      cellNew.setCellValue(LocalDate.parse(mapAnswer.get(celValue)));
-                      //  } else {
                             cellNew.setCellValue(mapAnswer.get(celValue));
-                       // }
                     }
                 }
                 try (FileOutputStream fileOut = new FileOutputStream(fileName)) {

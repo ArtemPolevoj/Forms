@@ -4,13 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="146d86cf-d5c8-4405-bf02-a12b5e4d34a0" name="Changes" comment="согласовано 25.03.2025">
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+    <list default="true" id="146d86cf-d5c8-4405-bf02-a12b5e4d34a0" name="Changes" comment="update size photo">
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_24_03_2025_9_12_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_24_03_2025_9_12__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_24_03_2025_9_14_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_24_03_2025_9_14__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_24_03_2025_9_15_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_24_03_2025_9_15__Changes_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/forms/Folder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/forms/Folder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/forms/ImageForm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/forms/ImageForm.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/forms/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/forms/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/forms/WordFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/forms/WordFile.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,6 +86,9 @@
   <component name="MavenRunner">
     <option name="jreName" value="#JAVA_HOME" />
   </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="2" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
 }</component>
@@ -90,24 +97,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Main.executor": "Run",
-    "Gradle.Forms [:Main.main()].executor": "Run",
-    "Gradle.Upgrade Gradle wrapper.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "json",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Gradle/gradle-8.13",
-    "project.structure.last.edited": "SDKs",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "reference.settings.project.maven.repository.indices"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Forms [:Main.main()].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Upgrade Gradle wrapper.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;json&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Gradle/gradle-8.13&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="org.forms.Main" />
@@ -124,7 +131,6 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Main" />
         <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
@@ -162,7 +168,55 @@
       <option name="project" value="LOCAL" />
       <updated>1742882586244</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="fixed a directory error">
+      <option name="closed" value="true" />
+      <created>1742907546684</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1742907546684</updated>
+    </task>
+    <task id="LOCAL-00005" summary="gradle -&gt; 8.13">
+      <option name="closed" value="true" />
+      <created>1742907589524</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1742907589524</updated>
+    </task>
+    <task id="LOCAL-00006" summary="update setOffer">
+      <option name="closed" value="true" />
+      <created>1742913670542</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1742913670542</updated>
+    </task>
+    <task id="LOCAL-00007" summary="update size photo">
+      <option name="closed" value="true" />
+      <created>1742973369450</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1742973369450</updated>
+    </task>
+    <task id="LOCAL-00008" summary="update size photo">
+      <option name="closed" value="true" />
+      <created>1742973383910</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1742973383910</updated>
+    </task>
+    <task id="LOCAL-00009" summary="update size photo">
+      <option name="closed" value="true" />
+      <created>1743080941665</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1743080941665</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -180,6 +234,10 @@
     <MESSAGE value="work data" />
     <MESSAGE value="update set table offer" />
     <MESSAGE value="согласовано 25.03.2025" />
-    <option name="LAST_COMMIT_MESSAGE" value="согласовано 25.03.2025" />
+    <MESSAGE value="fixed a directory error" />
+    <MESSAGE value="gradle -&gt; 8.13" />
+    <MESSAGE value="update setOffer" />
+    <MESSAGE value="update size photo" />
+    <option name="LAST_COMMIT_MESSAGE" value="update size photo" />
   </component>
 </project>
