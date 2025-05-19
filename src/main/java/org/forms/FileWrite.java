@@ -6,7 +6,6 @@ import org.apache.poi.xssf.usermodel.*;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.*;
 
 public class FileWrite {
@@ -52,7 +51,7 @@ public class FileWrite {
             Cell cell = cellIterator.next();
             if (cell.getStringCellValue().equals(id)) {
                 for (int i = 0; i <= sheet.getLastRowNum(); i++) {
-                      Cell temp = sheet.getRow(i).getCell(cell.getColumnIndex());
+                    Cell temp = sheet.getRow(i).getCell(cell.getColumnIndex());
                     if (temp.getStringCellValue().equals(mapAnswer.get(id))) {
                         return true;
                     }

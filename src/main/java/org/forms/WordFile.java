@@ -6,7 +6,9 @@ import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.*;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
@@ -221,8 +223,11 @@ public class WordFile {
         int width = (int) ((sizeImage / 1.3) / fileName.length);
         int height = (int) ((sizeImage / 1.8) / fileName.length);
         for (String s : fileName) {
-            try {
-                run.addPicture(new FileInputStream(s), XWPFDocument.PICTURE_TYPE_JPEG, s,
+            try(ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                BufferedImage image = ImageIO.read(new File(s));
+                String fileType = s.substring(s.lastIndexOf(".") + 1);
+                ImageIO.write(image, fileType, baos);
+                run.addPicture(new ByteArrayInputStream(baos.toByteArray()), XWPFDocument.PICTURE_TYPE_JPEG, s,
                         Units.toEMU(width), Units.toEMU(height));
             } catch (InvalidFormatException | IOException e) {
                 System.out.println("File image " + s);
