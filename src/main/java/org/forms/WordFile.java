@@ -183,7 +183,8 @@ public class WordFile {
         paragraph.setAlignment(ParagraphAlignment.LEFT);
         XWPFRun run = paragraph.createRun();
         try {
-            run.addPicture(new FileInputStream(logoFileName), XWPFDocument.PICTURE_TYPE_PNG, logoFileName, Units.toEMU(140), Units.toEMU(30));
+            run.addPicture(new FileInputStream("src/main/resources/logo.png"), XWPFDocument.PICTURE_TYPE_PNG,
+                    logoFileName, Units.toEMU(140), Units.toEMU(30));
         } catch (InvalidFormatException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -196,7 +197,8 @@ public class WordFile {
         run.setText("Дата: " + dateFormat.format(new Date()));
         run.setText("\t\t\tТехнический специалист\t\t");
         try {
-            run.addPicture(new FileInputStream(singFileName), XWPFDocument.PICTURE_TYPE_PNG, singFileName, Units.toEMU(30), Units.toEMU(30));
+            run.addPicture(new FileInputStream("src/main/resources/sing.png"), XWPFDocument.PICTURE_TYPE_PNG,
+                    singFileName, Units.toEMU(30), Units.toEMU(30));
         } catch (InvalidFormatException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -223,12 +225,16 @@ public class WordFile {
         int width = (int) ((sizeImage / 1.3) / fileName.length);
         int height = (int) ((sizeImage / 1.8) / fileName.length);
         for (String s : fileName) {
-            try(ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
                 BufferedImage image = ImageIO.read(new File(s));
                 String fileType = s.substring(s.lastIndexOf(".") + 1);
-                ImageIO.write(image, fileType, baos);
-                run.addPicture(new ByteArrayInputStream(baos.toByteArray()), XWPFDocument.PICTURE_TYPE_JPEG, s,
-                        Units.toEMU(width), Units.toEMU(height));
+                if (image != null) {
+                    ImageIO.write(image, fileType, baos);
+                    run.addPicture(new ByteArrayInputStream(baos.toByteArray()), XWPFDocument.PICTURE_TYPE_JPEG, s,
+                            Units.toEMU(width), Units.toEMU(height));
+                } else {
+                    System.out.println("Проверь файл(null): " + s);
+                }
             } catch (InvalidFormatException | IOException e) {
                 System.out.println("File image " + s);
                 throw new RuntimeException(e);
@@ -306,7 +312,7 @@ public class WordFile {
         XWPFRun run = document.createParagraph().createRun();
         run.addBreak();
         try {
-            run.addPicture(new FileInputStream("rating.png"), XWPFDocument.PICTURE_TYPE_JPEG,
+            run.addPicture(new FileInputStream("src/main/resources/rating.png"), XWPFDocument.PICTURE_TYPE_JPEG,
                     "rating.png", Units.toEMU(sizePage / 1.3), Units.toEMU(sizePage / 1.9));
         } catch (InvalidFormatException | IOException e) {
             throw new RuntimeException(e);
