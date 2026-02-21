@@ -43,8 +43,8 @@ public class WordFileTehnical extends WordFile {
                 + inputData.get("Серийный номер") + "_"
                 + inputData.get("Хозяйственный номер") +
                 ".docx";
-        String fileName = folderName + "/Отчет технический" + textFileName;
-        String newFileName = folderName + "/Отчет новый технический" + textFileName;
+        String fileName = folderName + "/Отчет технический " + textFileName;
+        String newFileName = folderName + "/Отчет новый технический " + textFileName;
 
         File file;
         file = new File(fileName);
@@ -149,25 +149,25 @@ public class WordFileTehnical extends WordFile {
         cell2.setWidth(sizeCell2);
         cell2.setText(secondText);
         cell2.getParagraphs().getFirst().setAlignment(ParagraphAlignment.CENTER);
-        if (secondText.equals("ОК")) {
-            cell1.setColor("90EE90");
-            cell2.setColor("90EE90");
-        } else if (secondText.equals("Нет осмотра")) {
-            cell1.setColor("ADD8E6");
-            cell2.setColor("ADD8E6");
-        } else {
+//        if (secondText.equals("ОК")) {
+//            cell1.setColor("90EE90");
+//            cell2.setColor("90EE90");
+//        } else if (secondText.equals("Нет осмотра")) {
+//            cell1.setColor("ADD8E6");
+//            cell2.setColor("ADD8E6");
+//        } else {
             cell1.setColor("FFDAB9");
             cell2.setColor("FFDAB9");
-        }
+//       }
         if (secondText.contains(".jpeg")) {
             insertImage(cell1, cell2, secondText);
         }
-        if (secondText.contains("Есть замечания")) {
-            cell1.getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.RESTART);
-            cell2.getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.CONTINUE);
-            XWPFParagraph paragraph = cell1.getParagraphs().getFirst();
-            paragraph.setAlignment(ParagraphAlignment.CENTER);
-        }
+//        if (secondText.contains("Есть замечания")) {
+//            cell1.getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.RESTART);
+//            cell2.getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.CONTINUE);
+//            XWPFParagraph paragraph = cell1.getParagraphs().getFirst();
+//            paragraph.setAlignment(ParagraphAlignment.CENTER);
+//        }
     }
 
     private void setHeaderFooter() {
@@ -241,9 +241,23 @@ public class WordFileTehnical extends WordFile {
     private void setResultDataTable() {
         int countRows = resultData.size();
         java.util.List<String> listQuestion = new ArrayList<>(resultData.keySet());
-        XWPFTable tableAnswer = document.createTable(countRows, 2);
+        XWPFTable tableAnswer;
         for (int i = 0; i < countRows; i++) {
-            setDataRow(tableAnswer, listQuestion.get(i), resultData.get(listQuestion.get(i)), i);
+            if(i < countRows - 1){
+                if(listQuestion.get(i + 1).contains("Фото")){
+                 tableAnswer = document.createTable(1, 2);
+                    setDataRow(tableAnswer, listQuestion.get(i), resultData.get(listQuestion.get(i)), 0);
+                }else {
+                tableAnswer = document.createTable(1, 2);
+                    setDataRow(tableAnswer, listQuestion.get(i), resultData.get(listQuestion.get(i)), 0);
+                    setOffer(null, null);
+                }
+            }else {
+            tableAnswer = document.createTable(1, 2);
+                setDataRow(tableAnswer, listQuestion.get(i), resultData.get(listQuestion.get(i)), 0);
+                setOffer(null, null);
+            }
+
         }
     }
 
@@ -318,7 +332,6 @@ public class WordFileTehnical extends WordFile {
     private void setMaps(Map<String, String> mapAnswer) {
         for (String key : mapAnswer.keySet()) {
             String value = mapAnswer.get(key);
-            System.out.println("KEY - " + key + ", VALUE - " + value);
             try {
                 int number = Integer.parseInt(key.substring(0, 1));
                 if (number == 1) {
