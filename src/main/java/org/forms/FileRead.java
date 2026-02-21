@@ -33,8 +33,9 @@ public class FileRead {
 
             for (String[] entry : data.getFirst()) {
                 if (!entry[1].isEmpty()) {
-                    String key = entry[0].trim().replace("## ", "");
-                    String value = entry[1].trim().replace("## ", "");
+                    String key = entry[0].replaceAll("#", "").trim();
+                    String value = entry[1].replaceAll("#", "").trim();
+                    System.out.println("KEY - " + key + ", VALUE - " + value);
                     if (key.contains("Машина (другое)")) {
                         key = "Машина";
                     }
