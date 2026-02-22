@@ -29,7 +29,6 @@ public class WordFileTehnical extends WordFile {
     private final Map<String, String> inputData = new LinkedHashMap<>();
     private final Map<String, String> preData = new LinkedHashMap<>();
     private final Map<String, String> resultData = new LinkedHashMap<>();
-    private final Map<String, String> defectData = new LinkedHashMap<>();
 
 
     public WordFileTehnical(Map<String, String> mapAnswer, String folderName) {
@@ -68,15 +67,8 @@ public class WordFileTehnical extends WordFile {
             setHead("Предварительный осмотр");
             setPreDataTable();
 
-  //          setHead("Результаты осмотра");
-  //          setDefectDataTable();
-//
             setHead("Результаты осмотра");
             setResultDataTable();
-
-//            document.createParagraph().setPageBreak(true);
-//            setHead("Приложение 1");
-//            setApposition();
 
             document.write(outputStream);
 
@@ -121,7 +113,7 @@ public class WordFileTehnical extends WordFile {
         XWPFTable tableData = document.createTable(countRows, 2);
         tableData.setWidth("100%");
         setTableBorders(tableData);
-        java.util.List<String> listQuestion = new ArrayList<>(inputData.keySet());
+        List<String> listQuestion = new ArrayList<>(inputData.keySet());
         for (int i = 0; i < countRows; i++) {
             XWPFTableCell cell1 = tableData.getRow(i).getCell(0);
             XWPFTableCell cell2 = tableData.getRow(i).getCell(1);
@@ -144,30 +136,19 @@ public class WordFileTehnical extends WordFile {
     private void setDataRow(XWPFTable table, String firstText, String secondText, int numberRow) {
         XWPFTableCell cell1 = table.getRow(numberRow).getCell(0);
         XWPFTableCell cell2 = table.getRow(numberRow).getCell(1);
+        table.setWidth("100%");
         cell1.setText(firstText);
         cell1.setWidth(sizeCell1);
         cell2.setWidth(sizeCell2);
         cell2.setText(secondText);
         cell2.getParagraphs().getFirst().setAlignment(ParagraphAlignment.CENTER);
-//        if (secondText.equals("ОК")) {
-//            cell1.setColor("90EE90");
-//            cell2.setColor("90EE90");
-//        } else if (secondText.equals("Нет осмотра")) {
-//            cell1.setColor("ADD8E6");
-//            cell2.setColor("ADD8E6");
-//        } else {
+
             cell1.setColor("FFDAB9");
             cell2.setColor("FFDAB9");
-//       }
+
         if (secondText.contains(".jpeg")) {
             insertImage(cell1, cell2, secondText);
         }
-//        if (secondText.contains("Есть замечания")) {
-//            cell1.getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.RESTART);
-//            cell2.getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.CONTINUE);
-//            XWPFParagraph paragraph = cell1.getParagraphs().getFirst();
-//            paragraph.setAlignment(ParagraphAlignment.CENTER);
-//        }
     }
 
     private void setHeaderFooter() {
@@ -240,7 +221,7 @@ public class WordFileTehnical extends WordFile {
 
     private void setResultDataTable() {
         int countRows = resultData.size();
-        java.util.List<String> listQuestion = new ArrayList<>(resultData.keySet());
+        List<String> listQuestion = new ArrayList<>(resultData.keySet());
         XWPFTable tableAnswer;
         for (int i = 0; i < countRows; i++) {
             if(i < countRows - 1){
@@ -250,12 +231,12 @@ public class WordFileTehnical extends WordFile {
                 }else {
                 tableAnswer = document.createTable(1, 2);
                     setDataRow(tableAnswer, listQuestion.get(i), resultData.get(listQuestion.get(i)), 0);
-                    setOffer(null, null);
+                    setOffer();
                 }
             }else {
             tableAnswer = document.createTable(1, 2);
                 setDataRow(tableAnswer, listQuestion.get(i), resultData.get(listQuestion.get(i)), 0);
-                setOffer(null, null);
+                setOffer();
             }
 
         }
@@ -263,7 +244,7 @@ public class WordFileTehnical extends WordFile {
 
     private void setPreDataTable() {
         int countRows = preData.size();
-        java.util.List<String> listQuestion = new ArrayList<>(preData.keySet());
+        List<String> listQuestion = new ArrayList<>(preData.keySet());
         XWPFTable tableAnswer = document.createTable(countRows, 2);
         for (int i = 0; i < countRows; i++) {
             XWPFTableCell cell1 = tableAnswer.getRow(i).getCell(0);
@@ -282,51 +263,7 @@ public class WordFileTehnical extends WordFile {
                 cell2.setText(preData.get(question));
             }
         }
-        setOffer(null, null);
-    }
-
-    private void setDefectDataTable() {
-        int countRows = defectData.size();
-        List<String> listQuestion = new ArrayList<>(defectData.keySet());
-        int number;
-        int oldNumber;
-        String recommendation = "";
-        String defect = "";
-        for (int i = 0; i < countRows; i++) {
-            number = Integer.parseInt(listQuestion.get(i).substring(0, 3));
-            if (i == 0) {
-                XWPFTable tableAnswer = document.createTable(1, 2);
-                setDataRow(tableAnswer, listQuestion.get(i), defectData.get(listQuestion.get(i)), 0);
-            } else {
-                oldNumber = Integer.parseInt(listQuestion.get(i - 1).substring(0, 3));
-                if (number == oldNumber) {
-                    if (listQuestion.get(i).contains("Неисправность")) {
-                        defect = defectData.get(listQuestion.get(i));
-                    }
-                    if (listQuestion.get(i).contains("Список необходимых з.ч.")) {
-                        recommendation = defectData.get(listQuestion.get(i));
-                    }
-                    XWPFTable tableAnswer = document.createTable(1, 2);
-                    setDataRow(tableAnswer, listQuestion.get(i), defectData.get(listQuestion.get(i)), 0);
-                } else {
-                    setOffer(defect, recommendation);
-                    XWPFTable tableAnswer = document.createTable(1, 2);
-                    setDataRow(tableAnswer, listQuestion.get(i), defectData.get(listQuestion.get(i)), 0);
-                }
-            }
-        }
-     //   setOffer(defect, recommendation);
-    }
-
-    private void setApposition() {
-        XWPFRun run = document.createParagraph().createRun();
-        run.addBreak();
-        try {
-            run.addPicture(new FileInputStream("rating.png"), XWPFDocument.PICTURE_TYPE_JPEG,
-                    "rating.png", Units.toEMU(sizePage / 1.3), Units.toEMU(sizePage / 1.9));
-        } catch (InvalidFormatException | IOException e) {
-            throw new RuntimeException(e);
-        }
+        setOffer();
     }
 
     private void setMaps(Map<String, String> mapAnswer) {
@@ -356,31 +293,13 @@ public class WordFileTehnical extends WordFile {
         }
     }
 
-    private void setOffer(String defect, String recommendation) {
+    private void setOffer() {
         XWPFTable tableData = document.createTable(1, 2);
         XWPFTableCell cell1 = tableData.getRow(0).getCell(0);
         XWPFTableCell cell2 = tableData.getRow(0).getCell(1);
         cell1.setWidth(sizeCell1);
         cell2.setWidth(sizeCell2);
         cell1.setText("Рекомендации");
-        cell2.setText(recommendation);
-//        XWPFTableCell cell3 = tableData.getRow(1).getCell(0);
-//        XWPFTableCell cell4 = tableData.getRow(1).getCell(1);
-//        XWPFTableCell cell5 = tableData.getRow(2).getCell(0);
-//        cell3.setWidth(sizeCell1);
-//        cell4.setWidth(sizeCell2);
-//        XWPFParagraph paragraph = cell3.getParagraphs().getFirst();
-//        paragraph.setVerticalAlignment(TextAlignment.CENTER);
-//        paragraph.setAlignment(ParagraphAlignment.CENTER);
-//        XWPFParagraph paragraph1 = cell4.getParagraphs().getFirst();
-//        paragraph1.setVerticalAlignment(TextAlignment.CENTER);
-//        paragraph1.setAlignment(ParagraphAlignment.CENTER);
-//        cell3.setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
-//        cell3.setText("Возможные последствия отказа");
-//        cell4.setText("Уровень последствий отказа (приложение 1)");
-//        cell3.setColor("FFFF00");
-//        cell4.setColor("FFFF00");
-//        cell5.setText(defect + " может привезти к ");
         document.createParagraph();
         XWPFRun run = document.createParagraph().createRun();
         run.setText("Коммерческое предложение:");
