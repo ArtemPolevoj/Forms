@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class FileWrite {
@@ -33,11 +34,13 @@ public class FileWrite {
                     String celValue = cell.getStringCellValue();
                     if (setMapAnswer.contains(celValue)) {
                         XSSFCell cellNew = rowNew.createCell(cell.getColumnIndex());
-                      //  if (celValue.contains("�����")) {
-                      //      cellNew.setCellValue(LocalDate.parse(mapAnswer.get(celValue)));
-                      //  } else {
-                            cellNew.setCellValue(mapAnswer.get(celValue));
-                       // }
+                        String tempValue = mapAnswer.get(celValue);
+                        if (celValue.contains("Дата осмотра")) {
+                            cellNew.setCellValue(LocalDate.parse(tempValue,
+                                    DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+                        } else {
+                            cellNew.setCellValue(tempValue);
+                        }
                     }
                 }
                 try (FileOutputStream fileOut = new FileOutputStream(fileName)) {
@@ -56,7 +59,7 @@ public class FileWrite {
             Cell cell = cellIterator.next();
             if (cell.getStringCellValue().equals(id)) {
                 for (int i = 0; i <= sheet.getLastRowNum(); i++) {
-                      Cell temp = sheet.getRow(i).getCell(cell.getColumnIndex());
+                    Cell temp = sheet.getRow(i).getCell(cell.getColumnIndex());
                     if (temp.getStringCellValue().equals(mapAnswer.get(id))) {
                         return true;
                     }

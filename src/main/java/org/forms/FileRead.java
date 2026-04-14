@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class FileRead {
@@ -73,13 +73,13 @@ public class FileRead {
     }
 
     private String parsDate(String inputDate) {
-        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        SimpleDateFormat outputFormat = new SimpleDateFormat("dd.MM.yyyy");
-        Date date;
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        LocalDateTime date;
         try {
-            date = inputFormat.parse(inputDate);
-            return outputFormat.format(date);
-        } catch (ParseException e) {
+             date = LocalDateTime.parse(inputDate, inputFormatter);
+            return date.format(outputFormatter);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
