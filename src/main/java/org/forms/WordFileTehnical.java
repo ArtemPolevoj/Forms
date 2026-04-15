@@ -143,8 +143,8 @@ public class WordFileTehnical extends WordFile {
         cell2.setText(secondText);
         cell2.getParagraphs().getFirst().setAlignment(ParagraphAlignment.CENTER);
 
-            cell1.setColor("FFDAB9");
-            cell2.setColor("FFDAB9");
+        cell1.setColor("FFDAB9");
+        cell2.setColor("FFDAB9");
 
         if (secondText.contains(".jpeg")) {
             insertImage(cell1, cell2, secondText);
@@ -224,17 +224,17 @@ public class WordFileTehnical extends WordFile {
         List<String> listQuestion = new ArrayList<>(resultData.keySet());
         XWPFTable tableAnswer;
         for (int i = 0; i < countRows; i++) {
-            if(i < countRows - 1){
-                if(listQuestion.get(i + 1).contains("Фото")){
-                 tableAnswer = document.createTable(1, 2);
+            if (i < countRows - 1) {
+                if (listQuestion.get(i + 1).contains("Фото")) {
+                    tableAnswer = document.createTable(1, 2);
                     setDataRow(tableAnswer, listQuestion.get(i), resultData.get(listQuestion.get(i)), 0);
-                }else {
-                tableAnswer = document.createTable(1, 2);
+                } else {
+                    tableAnswer = document.createTable(1, 2);
                     setDataRow(tableAnswer, listQuestion.get(i), resultData.get(listQuestion.get(i)), 0);
                     setOffer();
                 }
-            }else {
-            tableAnswer = document.createTable(1, 2);
+            } else {
+                tableAnswer = document.createTable(1, 2);
                 setDataRow(tableAnswer, listQuestion.get(i), resultData.get(listQuestion.get(i)), 0);
                 setOffer();
             }
@@ -279,10 +279,10 @@ public class WordFileTehnical extends WordFile {
 //                            || key.contains("Фото неисправности")
 //                            || value.contains("Есть замечания")) {
 //                        defectData.put(key, value);
-                    } else {
-                        resultData.put(key, value);
-                    }
- //              }
+                } else {
+                    resultData.put(key, value);
+                }
+                //              }
             } catch (Exception e) {
                 if (key.contains("предложения")) {
                     preData.put(key, value);
