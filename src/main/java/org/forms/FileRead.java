@@ -77,10 +77,12 @@ public class FileRead {
         DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         LocalDateTime date;
         try {
-             date = LocalDateTime.parse(inputDate, inputFormatter);
+            date = LocalDateTime.parse(inputDate, inputFormatter);
             return date.format(outputFormatter);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            date = LocalDateTime.now();
+            System.out.println(e.getMessage());
+            return date.format(outputFormatter);
         }
     }
 }
