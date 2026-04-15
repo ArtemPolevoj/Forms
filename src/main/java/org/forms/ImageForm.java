@@ -27,6 +27,7 @@ public class ImageForm {
         String number;
         String[] arrImage;
         String url = "https://storage.yandexcloud.net/art-forms-baket/";
+        System.out.println("Скачиваем файлы");
         for (String key : mapAnswer.keySet()) {
             if (key.contains("Фото")
                     || key.contains("фото")
@@ -79,5 +80,6 @@ public class ImageForm {
                 }
             }
         }
+        System.out.println("Файлы скачены");
     }
 }
