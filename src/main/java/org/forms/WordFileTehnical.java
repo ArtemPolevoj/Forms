@@ -23,10 +23,7 @@ public class WordFileTehnical extends WordFile {
 
             setHeaderFooter();
 
-            document.getDocument().getBody().addNewSectPr().addNewPgMar().setLeft(BigInteger.valueOf(sizePage));
-            document.getDocument().getBody().addNewSectPr().addNewPgMar().setRight(BigInteger.valueOf(sizePage));
-            document.getDocument().getBody().addNewSectPr().addNewPgMar().setTop(BigInteger.valueOf(sizePage));
-            document.getDocument().getBody().addNewSectPr().addNewPgMar().setBottom(BigInteger.valueOf(sizePage));
+            settingDocument();
 
             setHead("Данные инспекции");
             setInputDataTable();

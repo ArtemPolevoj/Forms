@@ -7,7 +7,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
 import java.awt.*;
 import java.io.*;
-import java.math.BigInteger;
 import java.util.*;
 import java.util.List;
 
@@ -27,10 +26,7 @@ public class WordFileUsual extends WordFile {
 
             setHeaderFooter();
 
-            document.getDocument().getBody().addNewSectPr().addNewPgMar().setLeft(BigInteger.valueOf(sizePage));
-            document.getDocument().getBody().addNewSectPr().addNewPgMar().setRight(BigInteger.valueOf(sizePage));
-            document.getDocument().getBody().addNewSectPr().addNewPgMar().setTop(BigInteger.valueOf(sizePage));
-            document.getDocument().getBody().addNewSectPr().addNewPgMar().setBottom(BigInteger.valueOf(sizePage));
+            settingDocument();
 
             setHead("Данные инспекции");
             setInputDataTable();
