@@ -4,7 +4,6 @@ import org.apache.poi.xwpf.usermodel.*;
 import java.awt.*;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +16,7 @@ public class WordFileTehnical extends WordFile {
     }
 
     public void createFile() {
-        settingFile();
+        settingFile(true);
 
         try (FileOutputStream outputStream = new FileOutputStream(file)) {
 

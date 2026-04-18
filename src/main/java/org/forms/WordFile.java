@@ -1,5 +1,6 @@
 package org.forms;
 
+import net.coobird.thumbnailator.Thumbnails;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
@@ -8,9 +9,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -27,6 +26,7 @@ public abstract class WordFile {
     protected Map<String, String> preData = new LinkedHashMap<>();
     protected Map<String, String> resultData = new LinkedHashMap<>();
     protected File file;
+
     public void createFile() {
     }
 
@@ -100,9 +100,16 @@ public abstract class WordFile {
         int width = (int) ((sizeImage / 1.3) / fileName.length);
         int height = (int) ((sizeImage / 1.8) / fileName.length);
         for (String s : fileName) {
-            try {
-                run.addPicture(new FileInputStream(s), XWPFDocument.PICTURE_TYPE_JPEG, s,
-                        Units.toEMU(width), Units.toEMU(height));
+            File originalFile = new File(s);
+            try(ByteArrayInputStream compressedImageStream = compressImage(originalFile, width, height);) {
+
+                run.addPicture(
+                        compressedImageStream,
+                        XWPFDocument.PICTURE_TYPE_JPEG,
+                        s,
+                        Units.toEMU(width),
+                        Units.toEMU(height));
+
             } catch (InvalidFormatException | IOException e) {
                 System.out.println("File image " + s);
                 throw new RuntimeException(e);
@@ -186,20 +193,30 @@ public abstract class WordFile {
         }
         setOffer();
     }
-    protected void settingFile(){
+
+    protected void settingFile(boolean technical) {
+        String fileName = "";
+        String newFileName = "";
         String textFileName = inputData.get("Машина") + " "
                 + inputData.get("Серийный номер") + "_"
                 + inputData.get("Хозяйственный номер") +
                 ".docx";
-        String fileName = folderName + "/Отчет технический " + textFileName;
-        String newFileName = folderName + "/Отчет новый технический " + textFileName;
+        if (technical) {
+            fileName = folderName + "/Отчет технический " + textFileName;
+            newFileName = folderName + "/Отчет новый технический " + textFileName;
+        } else {
+            fileName = folderName + "/Отчет " + textFileName;
+            newFileName = folderName + "/Отчет новый " + textFileName;
+        }
+
 
         file = new File(fileName);
         if (file.exists()) {
             file = new File(newFileName);
         }
     }
-    protected void openFile(){
+
+    protected void openFile() {
         if (file.exists()) {
             Desktop desktop = Desktop.getDesktop();
             try {
@@ -209,10 +226,41 @@ public abstract class WordFile {
             }
         }
     }
-    protected void settingDocument(){
+
+    protected void settingDocument() {
         document.getDocument().getBody().addNewSectPr().addNewPgMar().setLeft(BigInteger.valueOf(sizePage));
         document.getDocument().getBody().addNewSectPr().addNewPgMar().setRight(BigInteger.valueOf(sizePage));
         document.getDocument().getBody().addNewSectPr().addNewPgMar().setTop(BigInteger.valueOf(sizePage));
         document.getDocument().getBody().addNewSectPr().addNewPgMar().setBottom(BigInteger.valueOf(sizePage));
+    }
+
+    private float getCompressionLevel(long fileSize) {
+        long sizeInKb = fileSize / 1024;
+
+        if (sizeInKb <= 1024) {
+            return 0.99f;
+        } else if (sizeInKb <= 2048) {
+            return 0.95f;
+        } else {
+            return 0.9f;
+        }
+    }
+
+    private ByteArrayInputStream compressImage(File imageFile, int targetWidth, int targetHeight)  {
+
+        long fileSizeInBytes = imageFile.length();
+        float compressionLevel = getCompressionLevel(fileSizeInBytes);
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            Thumbnails.of(imageFile)
+                    .size(targetWidth, targetHeight)
+                    .outputFormat("jpg")
+                    .outputQuality(compressionLevel)
+                    .toOutputStream(baos);
+
+            return new ByteArrayInputStream(baos.toByteArray());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

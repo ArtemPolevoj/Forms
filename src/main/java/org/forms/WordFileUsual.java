@@ -20,7 +20,7 @@ public class WordFileUsual extends WordFile {
     }
 
     public void createFile() {
-        settingFile();
+        settingFile(false);
 
         try (FileOutputStream outputStream = new FileOutputStream(file)) {
 
