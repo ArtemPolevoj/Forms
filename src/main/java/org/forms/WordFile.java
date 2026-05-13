@@ -1,6 +1,7 @@
 package org.forms;
 
 import net.coobird.thumbnailator.Thumbnails;
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
@@ -101,7 +102,7 @@ public abstract class WordFile {
         int height = (int) ((sizeImage / 1.8) / fileName.length);
         for (String s : fileName) {
             File originalFile = new File(s);
-            try(ByteArrayInputStream compressedImageStream = compressImage(originalFile, width, height);) {
+            try (ByteArrayInputStream compressedImageStream = compressImage(originalFile, width, height)) {
 
                 run.addPicture(
                         compressedImageStream,
@@ -109,7 +110,6 @@ public abstract class WordFile {
                         s,
                         Units.toEMU(width),
                         Units.toEMU(height));
-
             } catch (InvalidFormatException | IOException e) {
                 System.out.println("File image " + s);
                 throw new RuntimeException(e);
@@ -195,8 +195,8 @@ public abstract class WordFile {
     }
 
     protected void settingFile(boolean technical) {
-        String fileName = "";
-        String newFileName = "";
+        String fileName;
+        String newFileName;
         String textFileName = inputData.get("Машина") + " "
                 + inputData.get("Серийный номер") + "_"
                 + inputData.get("Хозяйственный номер") +
@@ -246,7 +246,7 @@ public abstract class WordFile {
         }
     }
 
-    private ByteArrayInputStream compressImage(File imageFile, int targetWidth, int targetHeight)  {
+    private ByteArrayInputStream compressImage(File imageFile, int targetWidth, int targetHeight) throws IOException {
 
         long fileSizeInBytes = imageFile.length();
         float compressionLevel = getCompressionLevel(fileSizeInBytes);
@@ -254,13 +254,14 @@ public abstract class WordFile {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             Thumbnails.of(imageFile)
                     .size(targetWidth, targetHeight)
-                    .outputFormat("jpg")
+                    .outputFormat("jpeg")
                     .outputQuality(compressionLevel)
                     .toOutputStream(baos);
 
             return new ByteArrayInputStream(baos.toByteArray());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("Не удалось уменьшить размер файла - " + imageFile.getName());
+            return new ByteArrayInputStream(FileUtils.readFileToByteArray(imageFile));
         }
     }
 }
