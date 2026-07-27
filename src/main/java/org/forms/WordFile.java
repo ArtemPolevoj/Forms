@@ -238,11 +238,11 @@ public abstract class WordFile {
         long sizeInKb = fileSize / 1024;
 
         if (sizeInKb <= 1024) {
-            return 0.99f;
+            return 0.999f;
         } else if (sizeInKb <= 2048) {
-            return 0.95f;
+            return 0.998f;
         } else {
-            return 0.9f;
+            return 0.997f;
         }
     }
 
