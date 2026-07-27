@@ -34,15 +34,18 @@ public class WordFileUsual extends WordFile {
             setHead("Предварительный осмотр");
             setPreDataTable();
 
-            setHead("Неисправности");
-            setDefectDataTable();
+            if (!defectData.isEmpty()){
+                setHead("Неисправности");
+                setDefectDataTable();
+            }
+
 
             setHead("Без замечаний");
             setResultDataTable();
 
-            document.createParagraph().setPageBreak(true);
-            setHead("Приложение 1");
-            setApposition();
+//            document.createParagraph().setPageBreak(true);
+//            setHead("Приложение 1");
+//            setApposition();
 
             document.write(outputStream);
 
@@ -92,35 +95,37 @@ public class WordFileUsual extends WordFile {
 
     private void setDefectDataTable() {
         int countRows = defectData.size();
-        List<String> listQuestion = new ArrayList<>(defectData.keySet());
-        int number;
-        int oldNumber;
-        String recommendation = "";
-        String defect = "";
-        for (int i = 0; i < countRows; i++) {
-            number = Integer.parseInt(listQuestion.get(i).substring(0, 3));
-            if (i == 0) {
-                XWPFTable tableAnswer = document.createTable(1, 2);
-                setDataRow(tableAnswer, listQuestion.get(i), defectData.get(listQuestion.get(i)), 0);
-            } else {
-                oldNumber = Integer.parseInt(listQuestion.get(i - 1).substring(0, 3));
-                if (number == oldNumber) {
-                    if (listQuestion.get(i).contains("Неисправность")) {
-                        defect = defectData.get(listQuestion.get(i));
-                    }
-                    if (listQuestion.get(i).contains("Список необходимых з.ч.")) {
-                        recommendation = defectData.get(listQuestion.get(i));
-                    }
+        if(countRows > 0){
+            List<String> listQuestion = new ArrayList<>(defectData.keySet());
+            int number;
+            int oldNumber;
+            String recommendation = "";
+            String defect = "";
+            for (int i = 0; i < countRows; i++) {
+                number = Integer.parseInt(listQuestion.get(i).substring(0, 3));
+                if (i == 0) {
                     XWPFTable tableAnswer = document.createTable(1, 2);
                     setDataRow(tableAnswer, listQuestion.get(i), defectData.get(listQuestion.get(i)), 0);
                 } else {
-                    setOffer(defect, recommendation);
-                    XWPFTable tableAnswer = document.createTable(1, 2);
-                    setDataRow(tableAnswer, listQuestion.get(i), defectData.get(listQuestion.get(i)), 0);
+                    oldNumber = Integer.parseInt(listQuestion.get(i - 1).substring(0, 3));
+                    if (number == oldNumber) {
+                        if (listQuestion.get(i).contains("Неисправность")) {
+                            defect = defectData.get(listQuestion.get(i));
+                        }
+                        if (listQuestion.get(i).contains("Список необходимых з.ч.")) {
+                            recommendation = defectData.get(listQuestion.get(i));
+                        }
+                        XWPFTable tableAnswer = document.createTable(1, 2);
+                        setDataRow(tableAnswer, listQuestion.get(i), defectData.get(listQuestion.get(i)), 0);
+                    } else {
+                        setOffer(defect, recommendation);
+                        XWPFTable tableAnswer = document.createTable(1, 2);
+                        setDataRow(tableAnswer, listQuestion.get(i), defectData.get(listQuestion.get(i)), 0);
+                    }
                 }
             }
+            setOffer(defect, recommendation);
         }
-        setOffer(defect, recommendation);
     }
 
     private void setApposition() {
@@ -162,35 +167,37 @@ public class WordFileUsual extends WordFile {
     }
 
     private void setOffer(String defect, String recommendation) {
-        XWPFTable tableData = document.createTable(3, 2);
+      //  XWPFTable tableData = document.createTable(3, 2);
+        XWPFTable tableData = document.createTable(1, 2);
+
         XWPFTableCell cell1 = tableData.getRow(0).getCell(0);
         XWPFTableCell cell2 = tableData.getRow(0).getCell(1);
         cell1.setWidth(sizeCell1);
         cell2.setWidth(sizeCell2);
         cell1.setText("Рекомендации");
         cell2.setText(recommendation);
-        XWPFTableCell cell3 = tableData.getRow(1).getCell(0);
-        XWPFTableCell cell4 = tableData.getRow(1).getCell(1);
-        XWPFTableCell cell5 = tableData.getRow(2).getCell(0);
-        cell3.setWidth(sizeCell1);
-        cell4.setWidth(sizeCell2);
-        XWPFParagraph paragraph = cell3.getParagraphs().getFirst();
-        paragraph.setVerticalAlignment(TextAlignment.CENTER);
-        paragraph.setAlignment(ParagraphAlignment.CENTER);
-        XWPFParagraph paragraph1 = cell4.getParagraphs().getFirst();
-        paragraph1.setVerticalAlignment(TextAlignment.CENTER);
-        paragraph1.setAlignment(ParagraphAlignment.CENTER);
-        cell3.setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
-        cell3.setText("Возможные последствия отказа");
-        cell4.setText("Уровень последствий отказа (приложение 1)");
-        cell3.setColor("FFFF00");
-        cell4.setColor("FFFF00");
-        cell5.setText(defect + " может привезти к ");
+//        XWPFTableCell cell3 = tableData.getRow(1).getCell(0);
+//        XWPFTableCell cell4 = tableData.getRow(1).getCell(1);
+//        XWPFTableCell cell5 = tableData.getRow(2).getCell(0);
+//        cell3.setWidth(sizeCell1);
+//        cell4.setWidth(sizeCell2);
+//        XWPFParagraph paragraph = cell3.getParagraphs().getFirst();
+//        paragraph.setVerticalAlignment(TextAlignment.CENTER);
+//        paragraph.setAlignment(ParagraphAlignment.CENTER);
+//        XWPFParagraph paragraph1 = cell4.getParagraphs().getFirst();
+//        paragraph1.setVerticalAlignment(TextAlignment.CENTER);
+//        paragraph1.setAlignment(ParagraphAlignment.CENTER);
+//        cell3.setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+//        cell3.setText("Возможные последствия отказа");
+//        cell4.setText("Уровень последствий отказа (приложение 1)");
+//        cell3.setColor("FFFF00");
+//        cell4.setColor("FFFF00");
+//        cell5.setText(defect.replace(".", "") + " может привезти к ");
         document.createParagraph();
         XWPFRun run = document.createParagraph().createRun();
         run.setText("Предполагаемая стоимость:");
         run.addBreak();
-        run.addBreak();
+      //  run.addBreak();
         run.setText("Согласовано, должность: __________________ Ф.И.О.: _____________________ Дата: __________");
     }
 }
