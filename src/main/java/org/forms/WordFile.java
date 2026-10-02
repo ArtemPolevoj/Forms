@@ -1,7 +1,5 @@
 package org.forms;
 
-import net.coobird.thumbnailator.Thumbnails;
-import org.apache.commons.io.FileUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
@@ -9,7 +7,13 @@ import org.apache.poi.xwpf.usermodel.*;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
 
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
@@ -234,34 +238,33 @@ public abstract class WordFile {
         document.getDocument().getBody().addNewSectPr().addNewPgMar().setBottom(BigInteger.valueOf(sizePage));
     }
 
-    private float getCompressionLevel(long fileSize) {
-        long sizeInKb = fileSize / 1024;
-
-        if (sizeInKb <= 1024) {
-            return 0.999f;
-        } else if (sizeInKb <= 2048) {
-            return 0.998f;
-        } else {
-            return 0.997f;
-        }
-    }
-
     private ByteArrayInputStream compressImage(File imageFile, int targetWidth, int targetHeight) throws IOException {
 
-        long fileSizeInBytes = imageFile.length();
-        float compressionLevel = getCompressionLevel(fileSizeInBytes);
+        BufferedImage original = ImageIO.read(imageFile);
+        BufferedImage resized = new BufferedImage(targetWidth, targetHeight, original.getType());
 
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            Thumbnails.of(imageFile)
-                    .size(targetWidth, targetHeight)
-                    .outputFormat("jpeg")
-                    .outputQuality(compressionLevel)
-                    .toOutputStream(baos);
+        java.awt.Graphics2D g = resized.createGraphics();
+        g.setRenderingHint(java.awt.RenderingHints.KEY_INTERPOLATION,
+                java.awt.RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        g.drawImage(original, 0, 0, targetWidth, targetHeight, null);
+        g.dispose();
 
-            return new ByteArrayInputStream(baos.toByteArray());
-        } catch (IOException e) {
-            System.out.println("Не удалось уменьшить размер файла - " + imageFile.getName());
-            return new ByteArrayInputStream(FileUtils.readFileToByteArray(imageFile));
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpeg");
+        if (!writers.hasNext()) {
+            throw new IOException("Нет доступного JPEG ImageWriter");
         }
+        ImageWriter writer = writers.next();
+        ImageWriteParam param = writer.getDefaultWriteParam();
+        param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+        param.setCompressionQuality(0.9f);
+
+        MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(baos);
+        writer.setOutput(output);
+        writer.write(null, new IIOImage(resized, null, null), param);
+        output.close();
+
+        return new ByteArrayInputStream(baos.toByteArray());
     }
 }
